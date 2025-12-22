@@ -2,84 +2,104 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Neon VIP Predictor</title>
+<title>Premium Mines/VIP Signal Bot</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-:root{
-  --bg:#000;
-  --neon:#00ff88;
-  --danger:#ff4444;
+:root {
+  --bg:#0a0a0f;
+  --card:#13131a;
   --accent:#00ffaa;
+  --danger:#ff4d4d;
   --text:#ffffff;
+  --muted:#9aa0a6;
 }
 body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);}
-header{padding:15px;text-align:center;font-size:22px;font-weight:bold;color:var(--neon);text-shadow:0 0 8px var(--neon);}
-.tabs{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
-.tab{padding:8px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--neon);font-size:14px;}
-.tab.active{background:var(--neon);color:#000;}
-.box{display:none;max-width:440px;margin:auto;padding:15px;border:2px solid var(--neon);border-radius:12px;}
-input,select,button{padding:10px;width:90%;margin:8px 0;border-radius:50px;border:1px solid var(--neon);background:#000;color:var(--neon);}
-button:hover{background:var(--neon);color:#000;cursor:pointer;}
-.progress{height:12px;border-radius:6px;background:#111;margin:10px 0;overflow:hidden;}
-.fill{height:100%;background:var(--neon);width:0%;}
-.signal-display{text-align:center;margin:20px 0;font-size:22px;font-weight:bold;color:var(--neon);text-shadow:0 0 12px var(--neon);}
-ul{list-style:none;padding:0;margin:10px auto;max-height:180px;overflow-y:auto;width:95%;}
-li{padding:6px;margin:4px 0;border:1px solid var(--neon);border-radius:6px;display:flex;justify-content:space-between;}
-.admin-buttons{display:flex;gap:6px;margin-top:10px;}
+.app{max-width:480px;margin:auto;padding:15px;}
+.header{text-align:center;padding:10px 0;}
+.header h1{margin:0;font-size:22px;}
+.header span{font-size:12px;color:var(--muted);}
+.tab-container{display:flex;gap:5px;margin-bottom:12px;}
+.tab{padding:6px 10px;background:var(--card);border-radius:6px;cursor:pointer;font-size:13px;}
+.tab.active{background:var(--accent);color:#000;}
+.box{background:var(--card);padding:16px;border-radius:12px;display:none;}
+button,input,select{width:95%;padding:10px;margin-top:10px;border-radius:50px;border:none;background:#000;color:var(--accent);font-size:15px;}
+button:hover{background:#001f0f;cursor:pointer;}
+.signal-display{margin:20px auto;padding:15px;border:2px solid var(--accent);border-radius:12px;font-size:20px;text-align:center;color:#00ff00;background:#000;text-shadow:0 0 5px #00ff00,0 0 10px #00ff00;}
+ul{list-style:none;padding:0;margin:10px 0;max-height:150px;overflow-y:auto;}
+li{padding:5px;margin:4px 0;border-bottom:1px solid var(--accent);}
+.badge{padding:4px 8px;border-radius:999px;font-size:12px;margin-right:6px;}
+.green{background:#00ff00;color:#000;}
+.red{background:#ff4d4d;color:#000;}
+.admin-hamburger{display:flex;gap:6px;margin-bottom:10px;}
+.admin-tab{padding:5px 8px;background:#0f0f15;border-radius:6px;cursor:pointer;font-size:13px;}
+.admin-tab.active{background:var(--accent);color:#000;}
 </style>
 </head>
 <body>
-
-<header>💡 Neon VIP Predictor</header>
-
-<div class="tabs">
-  <div class="tab active" data-target="freeBox">FREE</div>
-  <div class="tab" data-target="vipBox">VIP</div>
-  <div class="tab" data-target="adminBox">ADMIN</div>
-</div>
-
-<!-- FREE -->
-<div class="box" id="freeBox">
-  <h3>Free Trial</h3>
-  <label>Telegram Username:</label>
-  <input id="freeUsername" placeholder="@username">
-  <button id="freeBtn">Get Free Signal</button>
-  <div class="signal-display" id="freeSignal">Waiting...</div>
-  <ul id="freeHistory"></ul>
-  <div>Signals left: <span id="freeLeft">10</span>/10</div>
-</div>
-
-<!-- VIP -->
-<div class="box" id="vipBox">
-  <h3>VIP Access</h3>
-  <label>Telegram Username:</label>
-  <input id="vipUsername" placeholder="@username">
-  <label>Enter VIP Key:</label>
-  <input id="vipKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX">
-  <button id="vipActivate">Activate VIP</button>
-  <div class="progress"><div class="fill" id="vipProgress"></div></div>
-  <div class="signal-display" id="vipSignal">Waiting...</div>
-  <ul id="vipHistory"></ul>
-  <div>Signals used today: <span id="vipUsed">0</span>/15</div>
-  <div>Days left: <span id="vipDays">0</span></div>
-</div>
-
-<!-- ADMIN -->
-<div class="box" id="adminBox">
-  <h3>Admin Panel</h3>
-  <label>Admin PIN:</label>
-  <input id="adminPin" placeholder="Enter PIN">
-  <button id="adminUnlock">Unlock</button>
-  <div id="adminControls" style="display:none;">
-    <div class="admin-buttons">
-      <button id="resetVIP">Revoke VIP</button>
-      <button id="resetFree">Reset Free</button>
-    </div>
-    <h4>VIP Users:</h4>
-    <ul id="vipUsers"></ul>
-    <h4>Free Users:</h4>
-    <ul id="freeUsers"></ul>
+<div class="app">
+  <div class="header">
+    <h1> THH Aviator Predictor Bot</h1>
+    <span>Free+VIP ACCESS
+✅</span>
   </div>
+
+  <!-- Username -->
+  <div class="box" id="usernameBox" style="display:block;">
+    <label>Enter your Telegram username:</label>
+    <input id="usernameInput" placeholder="@username">
+    <button id="saveUsername">Save Username</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-container">
+    <div class="tab active" data-target="freeBox">FREE</div>
+    <div class="tab" data-target="vipBox">VIP</div>
+    <div class="tab" data-target="adminBox">ADMIN</div>
+  </div>
+
+  <!-- Free Trial -->
+  <div class="box" id="freeBox">
+    <h3>Free Signals (10 max)</h3>
+    <button id="freeSignalBtn">Generate Free Signal</button>
+    <div class="signal-display" id="freeSignal">Waiting for signal...</div>
+    <ul id="freeHistory"></ul>
+  </div>
+
+  <!-- VIP -->
+  <div class="box" id="vipBox">
+    <h3>VIP Activation</h3>
+    <input id="vipKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX">
+    <button id="vipActivate">Activate VIP</button>
+    <div id="vipCountdown" style="margin-top:10px;"></div>
+    <button id="vipSignalBtn">Generate VIP Signal</button>
+    <div class="signal-display" id="vipSignal">Waiting for signal...</div>
+    <ul id="vipHistory"></ul>
+  </div>
+
+  <!-- Admin -->
+  <div class="box" id="adminBox">
+    <label>Admin PIN:</label>
+    <input id="adminPin" placeholder="Enter PIN">
+    <button id="adminLogin">Unlock Admin</button>
+
+    <div id="adminMenu" style="display:none;">
+      <div class="admin-hamburger">
+        <div class="admin-tab active" data-target="adminUsers">Activated Users</div>
+        <div class="admin-tab" data-target="adminKeys">Activation Keys</div>
+      </div>
+
+      <div id="adminUsers" class="admin-section">
+        <ul id="adminUserList"></ul>
+      </div>
+
+      <div id="adminKeys" class="admin-section" style="display:none;">
+        <ul id="adminKeyList"></ul>
+      </div>
+
+      <button id="revokeVipBtn">Revoke Selected VIP</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -91,133 +111,188 @@ tabs.forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.box').forEach(b=>b.style.display='none');
   document.getElementById(t.dataset.target).style.display='block';
 });
-document.getElementById('freeBox').style.display='block';
 
-// ---------------- State ----------------
-const FREE_MAX=10;
-const VIP_MAX=15;
-let freeUsed=+localStorage.getItem('freeUsed')||0;
-let vipUsed=+localStorage.getItem('vipUsed')||0;
-let vipData=JSON.parse(localStorage.getItem('vipData'))||null;
-
-// ---------------- VIP Keys ----------------
-const VIP_KEYS={
-  weekly:[
-    "W1A9-Q2K8-R3T4-F7M1","W2B7-F9K3-Q8M4-6R2X","W3C4-R8K2-M1F7-P9T3",
-    "W4D8-P7L3-F2K5-R6Q1","W5E1-K4R9-M7T2-F8P6","W6F3-T1M8-R5K4-Q7L2",
-    "W7G9-L2F6-P8R1-T3K4","W8H2-R3M5-K9T4-Q6F7","W9J5-P1K7-R4L8-T2M9","W0K8-F6R3-M2P9-Q1T5"
-  ],
-  monthly:[
-    "M1H8-T3K9-L2R5-P9Q4","M2J4-K8R2-P7F1-Q3L5","M3K7-R5T1-L9P3-F8M2",
-    "M4L2-P9K4-R1M8-T6F3","M5M3-F2R6-K8T1-L7P6","M6N9-K1L5-P3R7-T4F8",
-    "M7P1-T8F3-L6K2-R9M5","M8Q4-R7M2-P1K6-F3L9","M9R5-L3T9-K2F8-P4M7","M0S8-P6K3-R4L1-T5F2"
-  ],
-  lifetime:[
-    "L1X7-B6P9-KF4J-7R1T","L2M8-Q7F1-9K3L-R5T2","L3N9-P4K8-F7R1-T2M5",
-    "L4P1-K9T3-R5F8-M6L2","L5Q3-R1M7-K6F2-P8T4","L6R7-F3L5-P9T2-K1M8",
-    "L7S2-K8P4-R3M9-T5F1","L8T4-P7F1-K2R6-M3L9","L9U1-R5K2-F8M3-T4P7",
-    "L0V6-P3T8-K9L2-F5R1","L1W9-K4R7-M2P1-T8F3","L2X3-R6M1-F5K9-P7T2",
-    "L3Y7-P2L8-K1R5-T6F4","L4Z2-K5F3-R9M4-P1T8","L5A1-P6K2-F7T3-R4M9"
-  ]
+// ---------------- Username ----------------
+let username = localStorage.getItem('username') || '';
+document.getElementById('saveUsername').onclick = ()=>{
+  const val = document.getElementById('usernameInput').value.trim();
+  if(!val) return alert('Enter username');
+  username = val;
+  localStorage.setItem('username',username);
+  alert('Username saved: ' + username);
 };
 
-// ---------------- Tabs Display ----------------
-function showFreeLeft(){document.getElementById('freeLeft').textContent=FREE_MAX-freeUsed;}
-function showVipUsed(){document.getElementById('vipUsed').textContent=vipUsed;}
-function updateVipProgress(){
-  if(!vipData){document.getElementById('vipDays').textContent='0'; document.getElementById('vipProgress').style.width='0%'; return;}
-  const tierLength=(vipData.tier==='weekly'?7:vipData.tier==='monthly'?30:1);
-  const daysPassed=Math.floor((Date.now()-vipData.activatedAt)/86400000);
-  const daysLeft=Math.max(tierLength-daysPassed,0);
-  const progress=Math.min(daysPassed/tierLength*100,100);
-  document.getElementById('vipDays').textContent=daysLeft;
-  document.getElementById('vipProgress').style.width=progress+'%';
-  if(daysLeft<=0){vipData.expired=true;localStorage.setItem('vipData',JSON.stringify(vipData));}
-}
-
-// ---------------- Signal Generator ----------------
-function generateSignal(minX=1.23,maxX=1.95){
-  const coeff=(Math.random()*(maxX-minX)+minX).toFixed(2);
-  const now=new Date();
-  const delta=(Math.floor(Math.random()*5)+3)*60000; // 3-7 min ahead
-  const t=new Date(now.getTime()+delta);
-  const hours=t.getHours().toString().padStart(2,'0');
-  const minutes=t.getMinutes().toString().padStart(2,'0');
-  return {time:`${hours}:${minutes}`, coeff};
-}
-
-// ---------------- FREE ----------------
-document.getElementById('freeBtn').onclick=()=>{
-  const username=document.getElementById('freeUsername').value.trim();
-  if(!username){alert('Enter your Telegram username'); return;}
-  if(freeUsed>=FREE_MAX){alert('Free trial exhausted. Activate VIP'); return;}
-  let s;
-  do{s=generateSignal();}while(localStorage.getItem('freeSignals')?.includes(s.coeff));
-  freeUsed++; localStorage.setItem('freeUsed',freeUsed);
-  let arr=JSON.parse(localStorage.getItem('freeSignals')||'[]'); arr.push(s.coeff); localStorage.setItem('freeSignals',JSON.stringify(arr));
-  document.getElementById('freeSignal').textContent=`⏲️ TIME: ${s.time}\nCASHOUT AT: ${s.coeff}x`;
-  const li=document.createElement('li'); li.innerHTML=`<span>${username}</span><span>${s.coeff}x</span>`; document.getElementById('freeHistory').prepend(li);
-  // Save free users
-  let users=JSON.parse(localStorage.getItem('freeUsers')||'[]'); if(!users.includes(username)) {users.push(username); localStorage.setItem('freeUsers',JSON.stringify(users));}
-  showFreeLeft();
+// ---------------- Free ----------------
+const FREE_MAX = 10;
+let freeUsed = +localStorage.getItem('freeUsed')||0;
+document.getElementById('freeSignalBtn').onclick = ()=>{
+  if(freeUsed>=FREE_MAX){alert('Free signals exhausted'); return;}
+  freeUsed++;
+  localStorage.setItem('freeUsed',freeUsed);
+  const now = new Date();
+  const t = new Date(now.getTime() + (3+Math.random()*4)*60000); // 3-7 min ahead
+  const coeff = (Math.random()*(1.95-1.23)+1.23).toFixed(2);
+  const signalText = `⏲️TIME: ${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}\nCASHOUT AT: ${coeff}x`;
+  document.getElementById('freeSignal').textContent = signalText;
+  const li = document.createElement('li'); li.textContent = `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')} | ${coeff}x`;
+  document.getElementById('freeHistory').prepend(li);
 };
 
 // ---------------- VIP ----------------
-document.getElementById('vipActivate').onclick=()=>{
-  const username=document.getElementById('vipUsername').value.trim();
-  const key=document.getElementById('vipKeyInput').value.trim();
-  if(!username){alert('Enter your Telegram username'); return;}
-  if(!key){alert('Enter VIP Key'); return;}
-  let tier=null;
-  if(VIP_KEYS.weekly.includes(key)) tier='weekly';
-  else if(VIP_KEYS.monthly.includes(key)) tier='monthly';
-  else if(VIP_KEYS.lifetime.includes(key)) tier='lifetime';
-  else{alert('Invalid VIP Key'); return;}
-  vipData={username,key,tier,activatedAt:Date.now(),used:0,expired:false}; localStorage.setItem('vipData',JSON.stringify(vipData));
-  vipUsed=0; localStorage.setItem('vipUsed',vipUsed);
-  alert(`${tier.toUpperCase()} VIP Activated`);
-  updateVipProgress();
+let VIP_KEYS = {
+  'Weekly': ['W1A9-Q2K8-R3T4-F7M1','W2B7-F9K3-Q8M4-6R2X','W3C4-R8K2-M1F7-P9T3','W4D8-P7L3-F2K5-R6Q1','W5E1-K4R9-M7T2-F8P6','W6F3-T1M8-R5K4-Q7L2','W7G9-L2F6-P8R1-T3K4','W8H2-R3M5-K9T4-Q6F7','W9J5-P1K7-R4L8-T2M9','W0K8-F6R3-M2P9-Q1T5'],
+  'Monthly': ['M1H8-T3K9-L2R5-P9Q4','M2J4-K8R2-P7F1-Q3L5','M3K7-R5T1-L9P3-F8M2','M4L2-P9K4-R1M8-T6F3','M5M3-F2R6-K8T1-L7P6','M6N9-K1L5-P3R7-T4F8','M7P1-T8F3-L6K2-R9M5','M8Q4-R7M2-P1K6-F3L9','M9R5-L3T9-K2F8-P4M7','M0S8-P6K3-R4L1-T5F2'],
+  'Lifetime': ['L1X7-B6P9-KF4J-7R1T','L2M8-Q7F1-9K3L-R5T2','L3N9-P4K8-F7R1-T2M5','L4P1-K9T3-R5F8-M6L2','L5Q3-R1M7-K6F2-P8T4','L6R7-F3L5-P9T2-K1M8','L7S2-K8P4-R3M9-T5F1','L8T4-P7F1-K2R6-M3L9','L9U1-R5K2-F8M3-T4P7','L0V6-P3T8-K9L2-F5R1','L1W9-K4R7-M2P1-T8F3','L2X3-R6M1-F5K9-P7T2','L3Y7-P2L8-K1R5-T6F4','L4Z2-K5F3-R9M4-P1T8','L5A1-P6K2-F7T3-R4M9']
 };
 
-// VIP Signal
-document.getElementById('vipBtn')?.addEventListener('click',()=>{
-  if(!vipData){alert('Activate VIP first'); return;}
-  if(vipData.expired){alert('VIP Expired'); return;}
-  if(vipUsed>=VIP_MAX){alert('Daily limit reached'); return;}
-  let s;
-  do{s=generateSignal();}while(localStorage.getItem('vipSignals')?.includes(s.coeff));
-  vipUsed++; localStorage.setItem('vipUsed',vipUsed);
-  let arr=JSON.parse(localStorage.getItem('vipSignals')||'[]'); arr.push(s.coeff); localStorage.setItem('vipSignals',JSON.stringify(arr));
-  document.getElementById('vipSignal').textContent=`⏲️ TIME: ${s.time}\nCASHOUT AT: ${s.coeff}x`;
-  const li=document.createElement('li'); li.innerHTML=`<span>${vipData.username}</span><span>${s.coeff}x</span>`; document.getElementById('vipHistory').prepend(li);
-  // Save VIP users
-  let users=JSON.parse(localStorage.getItem('vipUsers')||'[]'); if(!users.includes(vipData.username)){users.push(vipData.username); localStorage.setItem('vipUsers',JSON.stringify(users));}
-  updateVipProgress();
-  showVipUsed();
-});
+let vipActive=false, vipUsed=0, vipExpiry=-1, vipKey='';
+
+function saveVIPState(){localStorage.setItem('vipKey',vipKey); localStorage.setItem('vipExpiry',vipExpiry); localStorage.setItem('vipUsed',vipUsed);}
+function loadVIPState(){vipKey=localStorage.getItem('vipKey')||''; vipExpiry=+localStorage.getItem('vipExpiry')||-1; vipUsed=+localStorage.getItem('vipUsed')||0; vipActive=vipKey&&((vipExpiry===-1)||vipExpiry>Date.now());}
+
+loadVIPState();
+
+document.getElementById('vipActivate').onclick = ()=>{
+  const key = document.getElementById('vipKeyInput').value.trim();
+  let found=false;
+  for(const cat in VIP_KEYS){if(VIP_KEYS[cat].includes(key)){found=true; break;}}
+  if(!found){alert('Invalid key'); return;}
+  vipKey=key;
+  vipUsed=0;
+  if(key.startsWith('W')) vipExpiry=Date.now()+7*86400000;
+  else if(key.startsWith('M')) vipExpiry=Date.now()+30*86400000;
+  else vipExpiry=-1;
+  vipActive=true;
+  saveVIPState();
+  alert('VIP Activated: '+key);
+};
+
+document.getElementById('vipSignalBtn').onclick = ()=>{
+  loadVIPState();
+  if(!vipActive || (vipExpiry!==-1 && vipExpiry<Date.now())){alert('VIP inactive or expired'); return;}
+  if(vipUsed>=15){alert('Daily VIP signals exhausted'); return;}
+  vipUsed++;
+  saveVIPState();
+  const now=new Date();
+  const t=new Date(now.getTime() + (3+Math.random()*4)*60000);
+  const coeff=(Math.random()*(1.95-1.23)+1.23).toFixed(2);
+  const signalText = `⏲️TIME: ${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}\nCASHOUT AT: ${coeff}x`;
+  document.getElementById('vipSignal').textContent=signalText;
+  const li=document.createElement('li');
+  li.textContent=`${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')} | ${coeff}x`;
+  document.getElementById('vipHistory').prepend(li);
+};
+
+// ---------------- Countdown ----------------
+setInterval(()=>{
+  loadVIPState();
+  const el=document.getElementById('vipCountdown');
+  if(!vipActive){el.textContent='No VIP activated'; return;}
+  if(vipExpiry===-1){el.textContent='Lifetime VIP'; return;}
+  const diff=vipExpiry-Date.now();
+  if(diff<=0){el.textContent='VIP Expired'; vipActive=false; saveVIPState(); return;}
+  const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000);
+  el.textContent=`${d}d ${h}h ${m}m remaining`;
+},1000);
 
 // ---------------- Admin ----------------
-document.getElementById('adminUnlock').onclick=()=>{
-  const pin=document.getElementById('adminPin').value.trim();
-  if(pin!=='VIP-ADMIN-2025'){alert('Wrong PIN'); return;}
-  document.getElementById('adminControls').style.display='block';
-  const vipList=document.getElementById('vipUsers'); vipList.innerHTML=''; JSON.parse(localStorage.getItem('vipUsers')||'[]').forEach(u=>{let li=document.createElement('li'); li.textContent=u; vipList.appendChild(li);});
-  const freeList=document.getElementById('freeUsers'); freeList.innerHTML=''; JSON.parse(localStorage.getItem('freeUsers')||'[]').forEach(u=>{let li=document.createElement('li'); li.textContent=u; freeList.appendChild(li);});
+const ADMIN_PIN='THH-ADMIN-2025';
+let adminUnlocked=false;
+
+document.getElementById('adminLogin').onclick = ()=>{
+  if(document.getElementById('adminPin').value.trim()!==ADMIN_PIN){alert('Access denied'); return;}
+  adminUnlocked=true;
+  document.getElementById('adminMenu').style.display='block';
+  renderAdminUsers();
+  renderAdminKeys();
 };
 
-// Reset VIP
-document.getElementById('resetVIP').onclick=()=>{
-  if(confirm('Revoke VIP and wipe all data?')){localStorage.removeItem('vipData'); localStorage.removeItem('vipUsed'); vipUsed=0; document.getElementById('vipSignal').textContent='Waiting...'; updateVipProgress();}
+// Admin menu tabs
+document.querySelectorAll('.admin-tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.admin-section').forEach(s=>s.style.display='none');
+    document.getElementById(t.dataset.target).style.display='block';
+  };
+});
+
+// Render activated users
+function renderAdminUsers(){
+  const ul=document.getElementById('adminUserList');
+  ul.innerHTML='';
+  const users = JSON.parse(localStorage.getItem('users')||'[]');
+  users.forEach(u=>{
+    const li=document.createElement('li');
+    li.textContent=`${u.username} | ${u.vipKey||'FREE'} | Expiry: ${u.vipExpiry?new Date(u.vipExpiry).toLocaleString():'N/A'} | Signals used: ${u.vipUsed||0}`;
+    ul.appendChild(li);
+  });
+}
+
+// Render activation keys
+function renderAdminKeys(){
+  const ul=document.getElementById('adminKeyList');
+  ul.innerHTML='';
+  for(const cat in VIP_KEYS){
+    const h4=document.createElement('h4'); h4.textContent=cat; ul.appendChild(h4);
+    VIP_KEYS[cat].forEach(k=>{
+      const active=localStorage.getItem('vipKey')===k && (+localStorage.getItem('vipExpiry')>Date.now()||k.startsWith('L'));
+      const li=document.createElement('li');
+      li.textContent=`${active?'🟢':'🔴'} ${k}`;
+      ul.appendChild(li);
+    });
+  }
+}
+
+// Save user on VIP activation
+function saveUserData(){
+  if(!username) return;
+  const users = JSON.parse(localStorage.getItem('users')||'[]');
+  const idx=users.findIndex(u=>u.username===username);
+  const udata={username,vipKey,vipExpiry,vipUsed};
+  if(idx>-1) users[idx]=udata; else users.push(udata);
+  localStorage.setItem('users',JSON.stringify(users));
+}
+
+// Save user data on VIP activate or signal
+document.getElementById('vipActivate').onclick = ()=>{
+  const key = document.getElementById('vipKeyInput').value.trim();
+  let found=false;
+  for(const cat in VIP_KEYS){if(VIP_KEYS[cat].includes(key)){found=true; break;}}
+  if(!found){alert('Invalid key'); return;}
+  vipKey=key; vipUsed=0;
+  if(key.startsWith('W')) vipExpiry=Date.now()+7*86400000;
+  else if(key.startsWith('M')) vipExpiry=Date.now()+30*86400000;
+  else vipExpiry=-1;
+  vipActive=true; saveVIPState(); saveUserData();
+  alert('VIP Activated: '+key);
 };
 
-// Reset Free
-document.getElementById('resetFree').onclick=()=>{
-  if(confirm('Reset Free signals?')){localStorage.removeItem('freeUsed'); localStorage.removeItem('freeSignals'); freeUsed=0; document.getElementById('freeSignal').textContent='Waiting...'; showFreeLeft();}
+// Save user after generating VIP signal
+document.getElementById('vipSignalBtn').onclick = ()=>{
+  loadVIPState();
+  if(!vipActive || (vipExpiry!==-1 && vipExpiry<Date.now())){alert('VIP inactive or expired'); return;}
+  if(vipUsed>=15){alert('Daily VIP signals exhausted'); return;}
+  vipUsed++; saveVIPState(); saveUserData();
+  const now=new Date();
+  const t=new Date(now.getTime() + (3+Math.random()*4)*60000);
+  const coeff=(Math.random()*(1.95-1.23)+1.23).toFixed(2);
+  const signalText=`⏲️TIME: ${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}\nCASHOUT AT: ${coeff}x`;
+  document.getElementById('vipSignal').textContent=signalText;
+  const li=document.createElement('li');
+  li.textContent=`${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')} | ${coeff}x`;
+  document.getElementById('vipHistory').prepend(li);
 };
 
-// ---------------- Init ----------------
-showFreeLeft(); showVipUsed(); updateVipProgress();
+// ---------------- Admin Revoke ----------------
+document.getElementById('revokeVipBtn').onclick = ()=>{
+  if(!adminUnlocked){alert('Unlock admin first'); return;}
+  if(!username) return alert('No user selected');
+  vipKey=''; vipExpiry=-1; vipUsed=0; vipActive=false; saveVIPState();
+  saveUserData();
+  alert('VIP revoked for user: '+username);
+  renderAdminUsers(); renderAdminKeys();
+};
 </script>
-
 </body>
-</html>
+  </html>
