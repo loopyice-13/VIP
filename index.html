@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Premium Mines/VIP Signal Bot</title>
+<title>Premium Aviator Signal Bot</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 :root {
@@ -38,7 +38,7 @@ li{padding:5px;margin:4px 0;border-bottom:1px solid var(--accent);}
 <body>
 <div class="app">
   <div class="header">
-    <h1>💣 Premium Mines/VIP Bot</h1>
+    <h1>Premium Aviator Bot</h1>
     <span>Free + VIP + Betting Sites + Admin</span>
   </div>
 
@@ -53,14 +53,14 @@ li{padding:5px;margin:4px 0;border-bottom:1px solid var(--accent);}
   <div class="tab-container">
     <div class="tab active" data-target="freeBox">FREE</div>
     <div class="tab" data-target="vipBox">VIP</div>
-    <div class="tab" data-target="sitesBox">SITES</div>
+    <div class="tab" data-target="sitesBox">BETTING SITES</div>
     <div class="tab" data-target="adminBox">ADMIN</div>
   </div>
 
-  <!-- Free Trial -->
+  <!-- Free -->
   <div class="box" id="freeBox">
     <h3>Free Signals (10 max)</h3>
-    <button id="freeSignalBtn">Generate Free Signal</button>
+    <button id="freeSignalBtn" disabled>Generate Free Signal</button>
     <div class="signal-display" id="freeSignal">Waiting for signal...</div>
     <ul id="freeHistory"></ul>
   </div>
@@ -71,31 +71,29 @@ li{padding:5px;margin:4px 0;border-bottom:1px solid var(--accent);}
     <input id="vipKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX">
     <button id="vipActivate">Activate VIP</button>
     <div id="vipCountdown" style="margin-top:10px;"></div>
-    <button id="vipSignalBtn">Generate VIP Signal</button>
+    <button id="vipSignalBtn" disabled>Generate VIP Signal</button>
     <div class="signal-display" id="vipSignal">Waiting for signal...</div>
     <ul id="vipHistory"></ul>
   </div>
 
   <!-- Betting Sites -->
   <div class="box" id="sitesBox">
-    <h3>Supported Betting Sites</h3>
+    <h3>Select a Betting Site</h3>
     <select id="siteSelect">
-      <option value="">--Select Site--</option>
+      <option value="">--Choose Site--</option>
       <option value="1Win">1Win</option>
-      <option value="SportyBet">SportyBet (GH/NG)</option>
-      <option value="Melbet">Melbet</option>
-      <option value="Betway">Betway</option>
+      <option value="SportyBet">SportyBet</option>
       <option value="Bet365">Bet365</option>
-      <option value="1xBet">1xBet</option>
-      <option value="Fairplay">Fairplay</option>
+      <option value="Betway">Betway</option>
+      <option value="Melbet">Melbet</option>
       <option value="22Bet">22Bet</option>
-      <option value="BetKing">BetKing</option>
+      <option value="Betika">Betika</option>
       <option value="PremierBet">PremierBet</option>
+      <option value="Tipico">Tipico</option>
+      <option value="1XBet">1XBet</option>
     </select>
-
-    <input id="bettingId" placeholder="Enter your Betting ID" disabled>
-    <button id="connectBtn" disabled>Connect</button>
-    <div id="connectionStatus" style="margin-top:10px;color:#00ff00;font-weight:bold;"></div>
+    <input id="siteIdInput" placeholder="Enter your betting ID" style="display:none;">
+    <button id="connectSiteBtn" style="display:none;">Connect</button>
   </div>
 
   <!-- Admin -->
@@ -144,41 +142,39 @@ document.getElementById('saveUsername').onclick = ()=>{
   alert('Username saved: ' + username);
 };
 
-// ---------------- Sites ----------------
+// ---------------- Betting Site Connect ----------------
 const siteSelect = document.getElementById('siteSelect');
-const bettingIdInput = document.getElementById('bettingId');
-const connectBtn = document.getElementById('connectBtn');
-const connectionStatus = document.getElementById('connectionStatus');
+const siteIdInput = document.getElementById('siteIdInput');
+const connectBtn = document.getElementById('connectSiteBtn');
 let siteConnected = false;
 
-siteSelect.onchange = ()=>{
-  const site = siteSelect.value;
-  bettingIdInput.disabled = !site;
-  connectBtn.disabled = !site;
-  connectionStatus.textContent = '';
-  siteConnected = false;
-};
+siteSelect.addEventListener('change',()=>{
+  if(siteSelect.value!==''){
+    siteIdInput.style.display='block';
+    connectBtn.style.display='block';
+  }else{
+    siteIdInput.style.display='none';
+    connectBtn.style.display='none';
+  }
+});
 
-connectBtn.onclick = ()=>{
-  const id = bettingIdInput.value.trim();
+connectBtn.addEventListener('click',()=>{
+  const id = siteIdInput.value.trim();
   if(!id) return alert('Enter your betting ID');
-
-  connectionStatus.textContent = 'Connecting ID to server...';
-  connectBtn.disabled = true;
-  bettingIdInput.disabled = true;
-  siteSelect.disabled = true;
-
+  alert('Connecting your ID to server...');
   setTimeout(()=>{
-    connectionStatus.textContent = `✅ Connected to ${siteSelect.value} as ID: ${id}. You can now generate signals.`;
+    alert('Connected! You can now generate signals.');
     siteConnected = true;
+    document.getElementById('freeSignalBtn').disabled = false;
+    document.getElementById('vipSignalBtn').disabled = false;
   },5000);
-};
+});
 
 // ---------------- Free Signals ----------------
 const FREE_MAX = 10;
 let freeUsed = +localStorage.getItem('freeUsed')||0;
 document.getElementById('freeSignalBtn').onclick = ()=>{
-  if(!siteConnected){alert('Connect your betting site first!'); return;}
+  if(!siteConnected){alert('Connect a betting site first'); return;}
   if(freeUsed>=FREE_MAX){alert('Free signals exhausted'); return;}
   freeUsed++;
   localStorage.setItem('freeUsed',freeUsed);
@@ -191,12 +187,154 @@ document.getElementById('freeSignalBtn').onclick = ()=>{
   document.getElementById('freeHistory').prepend(li);
 };
 
-// ---------------- VIP Signals ----------------
-// (Keep all your VIP logic here, with siteConnected check)
+// ---------------- VIP ----------------
+let VIP_KEYS = {
+  'Weekly': ['W1A9-Q2K8-R3T4-F7M1','W2B7-F9K3-Q8M4-6R2X','W3C4-R8K2-M1F7-P9T3','W4D8-P7L3-F2K5-R6Q1','W5E1-K4R9-M7T2-F8P6','W6F3-T1M8-R5K4-Q7L2','W7G9-L2F6-P8R1-T3K4','W8H2-R3M5-K9T4-Q6F7','W9J5-P1K7-R4L8-T2M9','W0K8-F6R3-M2P9-Q1T5'],
+  'Monthly': ['M1H8-T3K9-L2R5-P9Q4','M2J4-K8R2-P7F1-Q3L5','M3K7-R5T1-L9P3-F8M2','M4L2-P9K4-R1M8-T6F3','M5M3-F2R6-K8T1-L7P6','M6N9-K1L5-P3R7-T4F8','M7P1-T8F3-L6K2-R9M5','M8Q4-R7M2-P1K6-F3L9','M9R5-L3T9-K2F8-P4M7','M0S8-P6K3-R4L1-T5F2'],
+  'Lifetime': ['L1X7-B6P9-KF4J-7R1T','L2M8-Q7F1-9K3L-R5T2','L3N9-P4K8-F7R1-T2M5','L4P1-K9T3-R5F8-M6L2','L5Q3-R1M7-K6F2-P8T4','L6R7-F3L5-P9T2-K1M8','L7S2-K8P4-R3M9-T5F1','L8T4-P7F1-K2R6-M3L9','L9U1-R5K2-F8M3-T4P7','L0V6-P3T8-K9L2-F5R1','L1W9-K4R7-M2P1-T8F3','L2X3-R6M1-F5K9-P7T2','L3Y7-P2L8-K1R5-T6F4','L4Z2-K5F3-R9M4-P1T8','L5A1-P6K2-F7T3-R4M9']
+};
+
+let vipActive=false, vipUsed=0, vipExpiry=-1, vipKey='';
+
+function saveVIPState(){localStorage.setItem('vipKey',vipKey); localStorage.setItem('vipExpiry',vipExpiry); localStorage.setItem('vipUsed',vipUsed);}
+function loadVIPState(){vipKey=localStorage.getItem('vipKey')||''; vipExpiry=+localStorage.getItem('vipExpiry')||-1; vipUsed=+localStorage.getItem('vipUsed')||0; vipActive=vipKey && ((vipExpiry===-1) || vipExpiry>Date.now());}
+
+loadVIPState();
+
+document.getElementById('vipActivate').onclick = ()=>{
+  const key = document.getElementById('vipKeyInput').value.trim().toUpperCase();
+  let found=false;
+  for(const cat in VIP_KEYS){if(VIP_KEYS[cat].includes(key)){found=true; break;}}
+  if(!found){alert('Invalid key'); return;}
+  vipKey=key; vipUsed=0;
+  if(key.startsWith('W')) vipExpiry=Date.now()+7*86400000;
+  else if(key.startsWith('M')) vipExpiry=Date.now()+30*86400000;
+  else vipExpiry=-1;
+  vipActive=true; saveVIPState();
+  alert('VIP Activated: '+key);
+  if(siteConnected) document.getElementById('vipSignalBtn').disabled=false;
+};
+
+// VIP Signal
 document.getElementById('vipSignalBtn').onclick = ()=>{
-  if(!siteConnected){alert('Connect your betting site first!'); return;}
-  // ... existing VIP signal code
+  if(!siteConnected){alert('Connect a betting site first'); return;}
+  loadVIPState();
+  if(!vipActive || (vipExpiry!==-1 && vipExpiry<Date.now())){alert('VIP inactive or expired'); return;}
+  if(vipUsed>=15){alert('Daily VIP signals exhausted'); return;}
+  vipUsed++; saveVIPState();
+  const now=new Date();
+  const t=new Date(now.getTime() + (3+Math.random()*4)*60000);
+  const coeff=(Math.random()*(1.95-1.23)+1.23).toFixed(2);
+  const signalText=`⏲️TIME: ${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}\nCASHOUT AT: ${coeff}x`;
+  document.getElementById('vipSignal').textContent=signalText;
+  const li=document.createElement('li'); li.textContent=`${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')} | ${coeff}x`;
+  document.getElementById('vipHistory').prepend(li);
+};
+
+// ---------------- Countdown ----------------
+setInterval(()=>{
+  loadVIPState();
+  const el=document.getElementById('vipCountdown');
+  if(!vipActive){el.textContent='No VIP activated'; return;}
+  if(vipExpiry===-1){el.textContent='Lifetime VIP'; return;}
+  const diff=vipExpiry-Date.now();
+  if(diff<=0){el.textContent='VIP Expired'; vipActive=false; saveVIPState(); return;}
+  const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000);
+  el.textContent=`${d}d ${h}h ${m}m remaining`;
+},1000);
+
+// ---------------- Admin ----------------
+const ADMIN_PIN='THH-ADMIN-2025';
+let adminUnlocked=false;
+
+document.getElementById('adminLogin').onclick = ()=>{
+  if(document.getElementById('adminPin').value.trim()!==ADMIN_PIN){alert('Access denied'); return;}
+  adminUnlocked=true;
+  document.getElementById('adminMenu').style.display='block';
+  renderAdminUsers();
+  renderAdminKeys();
+};
+
+document.querySelectorAll('.admin-tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.admin-section').forEach(s=>s.style.display='none');
+    document.getElementById(t.dataset.target).style.display='block';
+  };
+});
+
+function renderAdminUsers(){
+  const ul=document.getElementById('adminUserList'); ul.innerHTML='';
+  const users = JSON.parse(localStorage.getItem('users')||'[]');
+  users.forEach(u=>{
+    const li=document.createElement('li');
+    li.textContent=`${u.username} | ${u.vipKey||'FREE'} | Expiry: ${u.vipExpiry?new Date(u.vipExpiry).toLocaleString():'N/A'} | Signals used: ${u.vipUsed||0}`;
+    ul.appendChild(li);
+  });
+}
+
+function renderAdminKeys(){
+  const ul=document.getElementById('adminKeyList'); ul.innerHTML='';
+  for(const cat in VIP_KEYS){
+    const h4=document.createElement('h4'); h4.textContent=cat; ul.appendChild(h4);
+    VIP_KEYS[cat].forEach(k=>{
+      const active=localStorage.getItem('vipKey')===k && (+localStorage.getItem('vipExpiry')>Date.now()||k.startsWith('L'));
+      const li=document.createElement('li');
+      li.textContent=`${active?'🟢':'🔴'} ${k}`;
+      ul.appendChild(li);
+    });
+  }
+}
+
+// Save user on VIP activation
+function saveUserData(){
+  if(!username) return;
+  const users = JSON.parse(localStorage.getItem('users')||'[]');
+  const idx=users.findIndex(u=>u.username===username);
+  const udata={username,vipKey,vipExpiry,vipUsed};
+  if(idx>-1) users[idx]=udata; else users.push(udata);
+  localStorage.setItem('users',JSON.stringify(users));
+}
+
+// Save user after VIP activate or signal
+document.getElementById('vipActivate').onclick = ()=>{
+  const key = document.getElementById('vipKeyInput').value.trim().toUpperCase();
+  let found=false;
+  for(const cat in VIP_KEYS){if(VIP_KEYS[cat].includes(key)){found=true; break;}}
+  if(!found){alert('Invalid key'); return;}
+  vipKey=key; vipUsed=0;
+  if(key.startsWith('W')) vipExpiry=Date.now()+7*86400000;
+  else if(key.startsWith('M')) vipExpiry=Date.now()+30*86400000;
+  else vipExpiry=-1;
+  vipActive=true; saveVIPState(); saveUserData();
+  alert('VIP Activated: '+key);
+  if(siteConnected) document.getElementById('vipSignalBtn').disabled=false;
+};
+
+document.getElementById('vipSignalBtn').onclick = ()=>{
+  if(!siteConnected){alert('Connect a betting site first'); return;}
+  loadVIPState();
+  if(!vipActive || (vipExpiry!==-1 && vipExpiry<Date.now())){alert('VIP inactive or expired'); return;}
+  if(vipUsed>=15){alert('Daily VIP signals exhausted'); return;}
+  vipUsed++; saveVIPState(); saveUserData();
+  const now=new Date();
+  const t=new Date(now.getTime() + (3+Math.random()*4)*60000);
+  const coeff=(Math.random()*(1.95-1.23)+1.23).toFixed(2);
+  const signalText=`⏲️TIME: ${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}\nCASHOUT AT: ${coeff}x`;
+  document.getElementById('vipSignal').textContent=signalText;
+  const li=document.createElement('li'); li.textContent=`${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')} | ${coeff}x`;
+  document.getElementById('vipHistory').prepend(li);
+};
+
+// Admin Revoke
+document.getElementById('revokeVipBtn').onclick = ()=>{
+  if(!adminUnlocked){alert('Unlock admin first'); return;}
+  if(!username) return alert('No user selected');
+  vipKey=''; vipExpiry=-1; vipUsed=0; vipActive=false; saveVIPState(); saveUserData();
+  alert('VIP revoked for user: '+username);
+  renderAdminUsers(); renderAdminKeys();
 };
 </script>
 </body>
-</html>
+        </html>
