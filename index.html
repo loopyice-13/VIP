@@ -143,6 +143,23 @@ input,select{
 <div class="small">Strategy assistant • No guaranteed wins</div>
 </div>
 
+<!-- 🔥 FIREBASE COMPAT CDN (ADDED – THIS FIXES EVERYTHING) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAOLShtHLvbOEJXy60SvrujL32k747sjBo",
+    authDomain: "aviator-bot-aec45.firebaseapp.com",
+    projectId: "aviator-bot-aec45",
+    storageBucket: "aviator-bot-aec45.firebasestorage.app",
+    messagingSenderId: "717972064760",
+    appId: "1:717972064760:web:a411c6b0366620a0b3ee0d"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+</script>
+
 <script>
 /* ===== VIP KEYS ===== */
 const VIP_KEYS={
@@ -175,16 +192,15 @@ function saveProfile(){
   };
   localStorage.setItem("profile",JSON.stringify(data));
   document.getElementById("profileStatus").innerText="✅ Information saved";
-}
 
-(function loadProfile(){
-  const p=JSON.parse(localStorage.getItem("profile")||"null");
-  if(!p) return;
-  document.getElementById("tgUser").value=p.tg||"";
-  document.getElementById("site").value=p.site||"";
-  document.getElementById("betId").value=p.bet||"";
-  document.getElementById("profileStatus").innerText="ℹ️ Saved information loaded";
-})();
+  // 🔴 THIS IS WHAT MAKES ADMIN SEE USERS (CROSS-DEVICE)
+  firebase.firestore().collection("users").doc(data.tg).set({
+    telegram: data.tg,
+    site: data.site,
+    betId: data.bet,
+    vipLevel: vipLevel
+  }, { merge:true });
+}
 
 /* ===== VIP ===== */
 function activateVIP(){
@@ -250,17 +266,11 @@ function generateSignal(type){
   updateCounts();
 }
 
-/* ===== COUNTDOWN (ADDED) ===== */
+/* ===== COUNTDOWN ===== */
 function startCountdown(type){
   const isVIP = type==="VIP";
-  const btn = isVIP
-    ? document.getElementById("vipBtn")
-    : document.getElementById("freeBtn");
-
-  const label = isVIP
-    ? document.getElementById("vipCountdown")
-    : document.getElementById("freeCountdown");
-
+  const btn = isVIP ? document.getElementById("vipBtn") : document.getElementById("freeBtn");
+  const label = isVIP ? document.getElementById("vipCountdown") : document.getElementById("freeCountdown");
   const endTime = isVIP ? vipNext : freeNext;
 
   btn.disabled = true;
@@ -287,23 +297,6 @@ function updateCounts(){
     `${vipLevel}: ${usedVIP}/${limits[vipLevel]}`;
 }
 
-/* ===== RESTORE COUNTDOWN ON REFRESH (ADDED) ===== */
-if(Date.now()<freeNext) startCountdown("Free");
-if(Date.now()<vipNext) startCountdown("VIP");
-
-/* ===== SNOW ===== */
-setInterval(()=>{
-  const s=document.createElement("div");
-  s.className="snow";
-  s.innerText="❄";
-  s.style.left=Math.random()*window.innerWidth+"px";
-  s.style.fontSize=(12+Math.random()*18)+"px";
-  document.body.appendChild(s);
-  s.animate([{top:"-20px"},{top:"110vh"}],{duration:7000});
-  setTimeout(()=>s.remove(),8000);
-},300);
-
-/* INIT */
 updateCounts();
 </script>
 
