@@ -21,219 +21,291 @@ body{
   background:rgba(18,18,18,.95);
   box-shadow:0 0 25px rgba(0,255,153,.3);
 }
-.tabs{display:flex;gap:8px;margin-bottom:15px}
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
+}
 .tab{
-  flex:1;padding:10px;text-align:center;
-  border-radius:10px;background:#111;cursor:pointer
+  flex:1;
+  padding:10px;
+  text-align:center;
+  border-radius:10px;
+  background:#111;
+  cursor:pointer;
 }
 .tab.active{
   background:linear-gradient(45deg,#00ff99,#ff3333);
-  color:#000;font-weight:bold
+  color:#000;
+  font-weight:bold;
 }
 button,input,select{
-  width:100%;padding:14px;margin-top:10px;
-  border-radius:12px;border:none
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  border-radius:12px;
+  border:none;
 }
 button{
   background:linear-gradient(45deg,#00ff99,#ff3333);
-  font-weight:bold;cursor:pointer
+  font-weight:bold;
+  cursor:pointer;
 }
-button:disabled{opacity:.4;cursor:not-allowed}
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
 input,select{
-  background:#000;color:#fff;border:1px solid #00ff99
+  background:#000;
+  color:#fff;
+  border:1px solid #00ff99;
 }
 .signal{
-  margin-top:15px;padding:15px;
-  border:2px solid #00ff99;border-radius:12px;
-  text-align:center;color:#00ff99;white-space:pre-line
-}
-.small{font-size:12px;opacity:.8;text-align:center;margin-top:8px}
-.hidden{display:none}
-
-/* Verified badge */
-#verifyBadge{
-  display:none;
-  color:#00ff99;
-  font-weight:bold;
+  margin-top:15px;
+  padding:15px;
+  border:2px solid #00ff99;
+  border-radius:12px;
   text-align:center;
-  margin-top:6px;
+  color:#00ff99;
+  white-space:pre-line;
 }
-
-/* Success animation */
-@keyframes verifyPulse{
-  0%{transform:scale(1);box-shadow:0 0 0 rgba(0,255,153,0)}
-  50%{transform:scale(1.05);box-shadow:0 0 30px rgba(0,255,153,.9)}
-  100%{transform:scale(1);box-shadow:0 0 0 rgba(0,255,153,0)}
+.small{
+  font-size:12px;
+  opacity:.7;
+  text-align:center;
+  margin-top:10px;
 }
-.verify-animate{animation:verifyPulse 1s ease-in-out 2}
-
-/* Snow */
+.hidden{display:none;}
 .snow{
   position:fixed;
   top:-20px;
-  pointer-events:none;
   z-index:9999;
+  pointer-events:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card" id="mainCard">
+<div class="card">
 <h3 style="text-align:center">✈ Aviator Assistant 🎄</h3>
-<div id="verifyBadge">Verified ✅</div>
 
 <div class="tabs">
   <div class="tab active" onclick="showTab('free')">FREE</div>
   <div class="tab" onclick="showTab('vip')">VIP</div>
-  <div class="tab" onclick="showTab('verify')">VERIFY</div>
+  <div class="tab" onclick="showTab('profile')">PERSONAL INFO</div>
 </div>
 
-<!-- FREE -->
+<!-- FREE TAB -->
 <div id="free">
-  <button id="freeBtn" onclick="generateSignal('Free')" disabled>
-    🎁 Generate Free Signal
-  </button>
-  <div class="signal" id="freeSignal">🔒 Verify Telegram to unlock</div>
+  <button id="freeBtn" onclick="generateSignal('Free')">🎁 Generate Free Signal</button>
+  <div class="small" id="freeCountdown"></div>
+  <div class="signal" id="freeSignal">❄ Waiting for signal...</div>
+  <div class="small" id="freeCount"></div>
 </div>
 
-<!-- VIP -->
+<!-- VIP TAB -->
 <div id="vip" class="hidden">
   <input id="vipKey" placeholder="Enter VIP Activation Key">
   <button onclick="activateVIP()">Activate VIP</button>
+  <div class="signal" id="vipStatus">VIP Status: Not Activated</div>
+
   <button id="vipBtn" onclick="generateSignal('VIP')" disabled>
     🚀 Generate VIP Signal
   </button>
-  <div class="signal" id="vipSignal">🔒 Verify Telegram to unlock</div>
+
+  <div class="small" id="vipCountdown"></div>
+  <div class="signal" id="vipSignal">🔒 Activate VIP to generate signals</div>
+  <div class="small" id="vipCount"></div>
 </div>
 
-<!-- VERIFY -->
-<div id="verify" class="hidden">
+<!-- PERSONAL INFO TAB -->
+<div id="profile" class="hidden">
+  <input id="tgUser" placeholder="Telegram Username (e.g. @username)">
+  
+  <select id="site">
+    <option value="">Select Aviator Site</option>
+    <option>Betway</option>
+    <option>1xBet</option>
+    <option>Melbet</option>
+    <option>SportyBet</option>
+    <option>Bet9ja</option>
+    <option>Other</option>
+  </select>
 
-  <div class="signal">
-    🔐 <b>Telegram Verification Required</b><br><br>
-    To unlock signals, verify using Telegram.<br>
-    Click the button below and approve login.
-  </div>
+  <input id="betId" placeholder="Bet ID">
 
-  <!-- Telegram Login Widget (VISIBLE ON LOAD) -->
-  <div style="text-align:center;margin-top:10px;">
-    <script src="https://telegram.org/js/telegram-widget.js?22"
-      data-telegram-login="THversion129_bot"
-      data-size="large"
-      data-userpic="true"
-      data-request-access="write"
-      data-onauth="onTelegramAuth">
-    </script>
-  </div>
+  <button onclick="saveProfile()">Save Info</button>
 
-  <input id="tgUser" placeholder="Telegram Username" disabled>
-  <div class="signal" id="profileStatus">Not verified</div>
-
+  <div class="signal" id="profileStatus">No data saved</div>
 </div>
 
 <div class="small">Strategy assistant • No guaranteed wins</div>
 </div>
 
-<!-- Firebase (COMPAT) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
 <script>
-/* FIREBASE */
-firebase.initializeApp({
-  apiKey: "AIzaSyAOLShtHLvbOEJXy60SvrujL32k747sjBo",
-  authDomain: "aviator-bot-aec45.firebaseapp.com",
-  projectId: "aviator-bot-aec45"
-});
-const db = firebase.firestore();
+/* ===== VIP KEYS ===== */
+const VIP_KEYS={
+  lifetime:["L1X7-B6P9-KF4J-7R1T","L2M8-Q7F1-9K3L-R5T2","L3N9-P4K8-F7R1-T2M5","L4P1-K9T3-R5F8-M6L2","L5Q3-R1M7-K6F2-P8T4","L6R7-F3L5-P9T2-K1M8","L7S2-K8P4-R3M9-T5F1","L8T4-P7F1-K2R6-M3L9","L9U1-R5K2-F8M3-T4P7","L0V6-P3T8-K9L2-F5R1","L1W9-K4R7-M2P1-T8F3","L2X3-R6M1-F5K9-P7T2","L3Y7-P2L8-K1R5-T6F4","L4Z2-K5F3-R9M4-P1T8","L5A1-P6K2-F7T3-R4M9"],
+  monthly:["M1H8-T3K9-L2R5-P9Q4","M2J4-K8R2-P7F1-Q3L5","M3K7-R5T1-L9P3-F8M2","M4L2-P9K4-R1M8-T6F3","M5M3-F2R6-K8T1-L7P6","M6N9-K1L5-P3R7-T4F8","M7P1-T8F3-L6K2-R9M5","M8Q4-R7M2-P1K6-F3L9","M9R5-L3T9-K2F8-P4M7","M0S8-P6K3-R4L1-T5F2"],
+  weekly:["W1A9-Q2K8-R3T4-F7M1","W2B7-F9K3-Q8M4-6R2X","W3C4-R8K2-M1F7-P9T3","W4D8-P7L3-F2K5-R6Q1","W5E1-K4R9-M7T2-F8P6","W6F3-T1M8-R5K4-Q7L2","W7G9-L2F6-P8R1-T3K4","W8H2-R3M5-K9T4-Q6F7","W9J5-P1K7-R4L8-T2M9","W0K8-F6R3-M2P9-Q1T5"]
+};
 
-/* Tabs */
+/* ===== STATE ===== */
+let vipLevel=localStorage.getItem("vipLevel")||"None";
+let limits={Free:15,"Weekly VIP":50,"Monthly VIP":200,"Lifetime VIP":99999};
+let usedFree=parseInt(localStorage.getItem("usedFree"))||0;
+let usedVIP=parseInt(localStorage.getItem("usedVIP"))||0;
+let freeNext=0,vipNext=0;
+
+/* ===== TABS ===== */
 function showTab(t){
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  document.querySelectorAll("#free,#vip,#verify").forEach(x=>x.classList.add("hidden"));
+  document.querySelectorAll("#free,#vip,#profile").forEach(x=>x.classList.add("hidden"));
   document.querySelector(`[onclick*='${t}']`).classList.add("active");
   document.getElementById(t).classList.remove("hidden");
 }
 
-/* Verification helpers */
-function isVerified(){
-  const p = JSON.parse(localStorage.getItem("profile")||"null");
-  return p && p.verified === true;
-}
-
-function updateVerificationUI(){
-  const v = isVerified();
-  freeBtn.disabled = !v;
-  vipBtn.disabled  = !v;
-  verifyBadge.style.display = v ? "block" : "none";
-}
-
-/* Telegram verification callback */
-function onTelegramAuth(user){
-  const profile = {
-    tg: "@"+user.username,
-    tgId: user.id,
-    verified: true
+/* ===== PROFILE ===== */
+function saveProfile(){
+  const data={
+    tg:document.getElementById("tgUser").value,
+    site:document.getElementById("site").value,
+    bet:document.getElementById("betId").value
   };
-  localStorage.setItem("profile", JSON.stringify(profile));
-  tgUser.value = profile.tg;
-  profileStatus.innerText = "✅ Telegram verified";
-
-  db.collection("users").doc(profile.tg).set({
-    telegram: profile.tg,
-    telegramId: user.id,
-    verified: true
-  },{merge:true});
-
-  updateVerificationUI();
-
-  // success animation
-  mainCard.classList.add("verify-animate");
-  setTimeout(()=>mainCard.classList.remove("verify-animate"),2000);
+  localStorage.setItem("profile",JSON.stringify(data));
+  document.getElementById("profileStatus").innerText="✅ Information saved";
 }
 
-/* VIP */
+(function loadProfile(){
+  const p=JSON.parse(localStorage.getItem("profile")||"null");
+  if(!p) return;
+  document.getElementById("tgUser").value=p.tg||"";
+  document.getElementById("site").value=p.site||"";
+  document.getElementById("betId").value=p.bet||"";
+  document.getElementById("profileStatus").innerText="ℹ️ Saved information loaded";
+})();
+
+/* ===== VIP ===== */
 function activateVIP(){
-  if(!isVerified()){
-    alert("Verify Telegram first");
-    showTab("verify");
+  const k=document.getElementById("vipKey").value.trim();
+  if(VIP_KEYS.lifetime.includes(k)) vipLevel="Lifetime VIP";
+  else if(VIP_KEYS.monthly.includes(k)) vipLevel="Monthly VIP";
+  else if(VIP_KEYS.weekly.includes(k)) vipLevel="Weekly VIP";
+  else{
+    document.getElementById("vipStatus").innerText="❌ Invalid Key";
     return;
   }
-  vipSignal.innerText = "✅ VIP Activated";
-  vipBtn.disabled = false;
+
+  localStorage.setItem("activatedKey", k);
+
+  usedVIP=0;
+  localStorage.setItem("vipLevel",vipLevel);
+  localStorage.setItem("usedVIP",0);
+  document.getElementById("vipStatus").innerText="✅ "+vipLevel+" Activated";
+  document.getElementById("vipBtn").disabled=false;
+  updateCounts();
 }
 
-/* Signal */
+/* ===== SIGNAL ===== */
 function generateSignal(type){
-  if(!isVerified()){
-    alert("Verify Telegram first");
-    showTab("verify");
-    return;
-  }
-  const sig=(Math.random()*(2-1.23)+1.23).toFixed(2);
-  const t=new Date(Date.now()+300000).toTimeString().slice(0,8);
-  const txt=`🕜 TIME: ${t}\n🚀 SIGNAL: ${sig}x`;
+  const isVIP=type==="VIP";
+  const now=Date.now();
+  if(isVIP && now<vipNext) return;
+  if(!isVIP && now<freeNext) return;
 
-  if(type==="VIP") vipSignal.innerText=txt;
-  else freeSignal.innerText=txt;
+  if(isVIP){
+    if(vipLevel==="None"){
+      document.getElementById("vipSignal").innerText="🔒 Activate VIP first";
+      return;
+    }
+    if(usedVIP>=limits[vipLevel]){
+      document.getElementById("vipSignal").innerText="🚫 VIP limit reached";
+      return;
+    }
+    usedVIP++; localStorage.setItem("usedVIP",usedVIP);
+  }else{
+    if(usedFree>=limits.Free){
+      document.getElementById("freeSignal").innerText="🎁 Free signals exhausted";
+      return;
+    }
+    usedFree++; localStorage.setItem("usedFree",usedFree);
+  }
+
+  const ahead=Math.floor(Math.random()*5)+3;
+  const future=new Date(Date.now()+ahead*60000);
+  const time=future.toTimeString().slice(0,8);
+  const sig=(Math.random()*(2-1.23)+1.23).toFixed(2);
+  const txt=`🕜 TIME: ${time}\n🚀 SIGNAL: ${sig}x`;
+
+  if(isVIP){
+    vipNext=Date.now()+ahead*60000;
+    document.getElementById("vipSignal").innerText=txt;
+    startCountdown("VIP");
+  }else{
+    freeNext=Date.now()+ahead*60000;
+    document.getElementById("freeSignal").innerText=txt;
+    startCountdown("Free");
+  }
+  updateCounts();
 }
 
-/* Snow */
+/* ===== COUNTDOWN (ADDED) ===== */
+function startCountdown(type){
+  const isVIP = type==="VIP";
+  const btn = isVIP
+    ? document.getElementById("vipBtn")
+    : document.getElementById("freeBtn");
+
+  const label = isVIP
+    ? document.getElementById("vipCountdown")
+    : document.getElementById("freeCountdown");
+
+  const endTime = isVIP ? vipNext : freeNext;
+
+  btn.disabled = true;
+
+  const timer = setInterval(()=>{
+    const diff = endTime - Date.now();
+    if(diff<=0){
+      clearInterval(timer);
+      btn.disabled=false;
+      label.innerText="Ready";
+      return;
+    }
+    const m=Math.floor(diff/60000);
+    const s=Math.floor((diff%60000)/1000);
+    label.innerText=`Next signal in ${m}:${s.toString().padStart(2,"0")}`;
+  },1000);
+}
+
+/* ===== COUNTS ===== */
+function updateCounts(){
+  document.getElementById("freeCount").innerText=`Free signals: ${usedFree}/15`;
+  document.getElementById("vipCount").innerText=
+    vipLevel==="None"?"VIP inactive":
+    `${vipLevel}: ${usedVIP}/${limits[vipLevel]}`;
+}
+
+/* ===== RESTORE COUNTDOWN ON REFRESH (ADDED) ===== */
+if(Date.now()<freeNext) startCountdown("Free");
+if(Date.now()<vipNext) startCountdown("VIP");
+
+/* ===== SNOW ===== */
 setInterval(()=>{
   const s=document.createElement("div");
   s.className="snow";
   s.innerText="❄";
-  s.style.left=Math.random()*innerWidth+"px";
+  s.style.left=Math.random()*window.innerWidth+"px";
   s.style.fontSize=(12+Math.random()*18)+"px";
   document.body.appendChild(s);
   s.animate([{top:"-20px"},{top:"110vh"}],{duration:7000});
   setTimeout(()=>s.remove(),8000);
 },300);
 
-/* Init */
-updateVerificationUI();
+/* INIT */
+updateCounts();
 </script>
 
 </body>
-</html>
+  </html>
