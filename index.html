@@ -2,119 +2,117 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aviator Assistant Premium 🎄</title>
+<title>Aviator Assistant Premium</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Inter,Arial,sans-serif;
-  background:radial-gradient(circle at top,#0b1f17,#000);
-  color:#eafff5;
+  font-family:'Inter',Arial,sans-serif;
+  background:linear-gradient(135deg,#0d1117,#0f1a20);
+  color:#e0f7ff;
   overflow-x:hidden;
 }
-
-/* ===== PREMIUM CARD ===== */
 .card{
-  max-width:420px;
-  margin:24px auto;
-  padding:22px;
-  border-radius:22px;
-  background:rgba(15,15,15,.92);
-  backdrop-filter:blur(12px);
-  box-shadow:0 0 35px rgba(0,255,170,.35);
+  max-width:440px;
+  margin:40px auto;
+  padding:24px;
+  border-radius:24px;
+  background:rgba(20,20,25,0.85);
+  backdrop-filter:blur(15px);
+  box-shadow:0 0 40px rgba(0,255,200,0.35);
+  border:1px solid rgba(0,255,200,0.3);
 }
-
-/* ===== HEADER ===== */
 .header{
   text-align:center;
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:18px;
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:20px;
+  background:linear-gradient(90deg,#00fff0,#00bfff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
-
-/* ===== TABS ===== */
 .tabs{
   display:flex;
-  gap:8px;
-  margin-bottom:18px;
+  gap:10px;
+  margin-bottom:20px;
 }
 .tab{
   flex:1;
   padding:12px;
   text-align:center;
-  border-radius:14px;
-  background:#0a0a0a;
-  border:1px solid #00ff99;
+  border-radius:16px;
+  background:#111;
+  border:1px solid #00fff0;
   cursor:pointer;
   transition:.3s;
 }
 .tab.active{
-  background:linear-gradient(45deg,#00ff99,#ff4444);
-  color:#000;
+  background:linear-gradient(90deg,#00fff0,#00bfff);
+  color:#111;
   font-weight:700;
-  box-shadow:0 0 12px rgba(0,255,153,.6);
+  box-shadow:0 0 15px rgba(0,255,255,0.6);
 }
-
-/* ===== FORMS ===== */
 input,select,button{
   width:100%;
   padding:14px;
   margin-top:12px;
-  border-radius:14px;
+  border-radius:16px;
   border:none;
-  font-size:14px;
+  font-size:15px;
 }
 input,select{
-  background:#000;
+  background:#0c0c0c;
   color:#fff;
-  border:1px solid #00ff99;
+  border:1px solid #00fff0;
 }
 button{
-  background:linear-gradient(45deg,#00ff99,#ff4444);
+  background:linear-gradient(90deg,#00fff0,#00bfff);
   font-weight:700;
   cursor:pointer;
+  transition:.3s;
+}
+button:hover:not(:disabled){
+  box-shadow:0 0 12px rgba(0,255,255,0.6);
 }
 button:disabled{
   opacity:.5;
   cursor:not-allowed;
 }
-
-/* ===== SIGNAL BOX ===== */
 .signal{
-  margin-top:16px;
-  padding:16px;
-  border:2px solid #00ff99;
-  border-radius:16px;
+  margin-top:18px;
+  padding:18px;
+  border:2px solid #00fff0;
+  border-radius:18px;
   text-align:center;
   white-space:pre-line;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,0.65);
+  font-weight:500;
+  font-size:14px;
 }
-
-/* ===== SMALL TEXT ===== */
 .small{
   text-align:center;
-  font-size:12px;
-  opacity:.7;
-  margin-top:10px;
+  font-size:13px;
+  opacity:.6;
+  margin-top:12px;
 }
-
-/* ===== SNOW ===== */
-.snow{
-  position:fixed;
-  top:-20px;
-  pointer-events:none;
-  z-index:9999;
+.dashboard-box{
+  margin-top:16px;
+  padding:14px;
+  border:2px solid #00bfff;
+  border-radius:16px;
+  background:rgba(0,0,0,0.55);
+  text-align:center;
+  font-size:13px;
+  margin-bottom:10px;
 }
 .hidden{display:none;}
 </style>
 </head>
-
 <body>
 
 <div class="card">
-  <div class="header">✈ Aviator Assistant <span style="color:#00ff99">Premium</span> 🎄</div>
+  <div class="header">✈ Aviator Assistant <span style="color:#00fff0">Premium</span></div>
 
   <div class="tabs">
     <div class="tab active" onclick="showTab('profile',this)">PERSONAL</div>
@@ -140,6 +138,8 @@ button:disabled{
   <div id="free" class="hidden">
     <button id="freeBtn" onclick="generateFree()">Generate Free Signal</button>
     <div class="signal" id="freeSignal">Waiting…</div>
+    <div class="dashboard-box" id="streakBox">🔥 Streak: 0</div>
+    <div class="dashboard-box" id="tipsBox">💡 Tip: Waiting...</div>
     <div class="small" id="freeInfo"></div>
   </div>
 
@@ -148,45 +148,52 @@ button:disabled{
     <input id="vipKey" placeholder="Enter Monthly VIP Key">
     <button onclick="activateVIP()">Activate VIP</button>
     <div class="signal" id="vipStatus">VIP locked</div>
-
-    <button id="vipBtn" onclick="generateVIP()" disabled>
-      Generate VIP Signal
-    </button>
-
+    <button id="vipBtn" onclick="generateVIP()" disabled>Generate VIP Signal</button>
     <div class="signal" id="vipSignal">🔒 VIP locked</div>
+    <div class="dashboard-box" id="vipInsights">VIP Insights: Locked</div>
+    <div class="dashboard-box" id="vipStreak">🔥 Streak: 0</div>
+    <div class="dashboard-box" id="vipTips">💡 Tip: Waiting...</div>
     <div class="small" id="vipInfo"></div>
   </div>
 
-  <div class="small">No guaranteed wins • Merry Christmas 🎄</div>
+  <div class="small">No guaranteed wins • Use responsibly</div>
 </div>
 
 <script>
-/* ===== TAB ===== */
+document.addEventListener("DOMContentLoaded",()=>{
+  const p=JSON.parse(localStorage.getItem("profile")||"null");
+  if(p){
+    site.value=p.site||"";
+    betId.value=p.bet||"";
+    profileStatus.innerText="✅ Info restored";
+  }
+});
 function showTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('#profile,#free,#vip').forEach(d=>d.classList.add('hidden'));
   el.classList.add('active');
   document.getElementById(id).classList.remove('hidden');
 }
-
-/* ===== PROFILE ===== */
 function saveProfile(){
   localStorage.setItem("profile",JSON.stringify({site:site.value,bet:betId.value}));
   profileStatus.innerText="✅ Information saved";
 }
 
-/* ===== SIGNAL ENGINE ===== */
+/* ===== SIGNAL ENGINE WITH ACTION ===== */
 function weightedSignal(){
-  return Math.random()<0.72
-    ? (Math.random()*(1.50-1.23)+1.23).toFixed(2)
-    : (Math.random()*(1.98-1.51)+1.51).toFixed(2);
-}
-function futureTime(){
-  const sec=180+Math.floor(Math.random()*121);
-  return new Date(Date.now()+sec*1000).toLocaleTimeString();
+  if(Math.random() < 0.75){
+    return {cashout:(Math.random()*(1.41-1.23)+1.23).toFixed(2), action:"Bet now"};
+  } else {
+    return {cashout:(Math.random()*(1.75-1.42)+1.42).toFixed(2), action:"After this round"};
+  }
 }
 function formatSignal(){
-  return `🕜 Time: ${futureTime()}\n🚀 Signal: ${weightedSignal()}x`;
+  const s=weightedSignal();
+  const confidence=["Low","Medium","High"][Math.floor(Math.random()*3)];
+  return `🚀 Cashout: ${s.cashout}x
+📊 Confidence: ${confidence}
+⏱ Action: ${s.action}
+⚠️ Manage stake`;
 }
 
 /* ===== COOLDOWN ===== */
@@ -203,72 +210,70 @@ function cooldown(btn,label){
   },1000);
 }
 
-/* ===== FREE ===== */
-let freeUsed=+localStorage.getItem("freeUsed")||0;
-let freeLocked=freeUsed>=3;
-
+/* ===== FREE SIGNALS ===== */
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+let freeData=JSON.parse(localStorage.getItem("freeData")||"{}");
+if(freeData.date!==todayKey()){ freeData={date:todayKey(),used:0}; localStorage.setItem("freeData",JSON.stringify(freeData)); }
+let freeStreak=0;
 function generateFree(){
-  if(freeLocked)return;
-  freeUsed++;
-  localStorage.setItem("freeUsed",freeUsed);
-  freeSignal.innerText=formatSignal();
+  if(freeData.used>=3){ freeBtn.disabled=true; freeInfo.innerText="🔒 Daily limit reached"; return; }
+  freeData.used++;
+  localStorage.setItem("freeData",JSON.stringify(freeData));
+
+  const signal=formatSignal();
+  freeSignal.innerText=signal;
+
+  // Streak tracker
+  freeStreak = signal.includes("1.23") || signal.includes("1.24") || signal.includes("1.25") || signal.includes("1.26") || signal.includes("1.27") || signal.includes("1.28") || signal.includes("1.29") || signal.includes("1.30") || signal.includes("1.31") || signal.includes("1.32") || signal.includes("1.33") || signal.includes("1.34") || signal.includes("1.35") || signal.includes("1.36") || signal.includes("1.37") || signal.includes("1.38") || signal.includes("1.39") || signal.includes("1.40") || signal.includes("1.41") ? freeStreak+1 : 0;
+  streakBox.innerText=`🔥 Streak: ${freeStreak}`;
+
+  // Rotate Smart Tips
+  const tips=["Low-risk signals are frequent early.","Avoid consecutive high-risk signals >1.6x.","Manage stake by confidence.","High-risk signals are rare, be cautious.","Use 3–5 mins windows for best results."];
+  tipsBox.innerText="💡 Tip: "+tips[Math.floor(Math.random()*tips.length)];
+
   cooldown(freeBtn,freeInfo);
-  if(freeUsed>=3){
-    freeLocked=true;
-    freeBtn.disabled=true;
-    freeInfo.innerText="🔒 Free locked forever";
-  }
 }
-freeInfo.innerText=`Free used: ${freeUsed}/3`;
+freeInfo.innerText=`Free today: ${freeData.used}/3`;
 
-/* ===== VIP (SESSION ONLY) ===== */
-const VIP_KEY="VIP-5f710a0a-fcdc-46d1-8593-5718617ed882";
-let vipActive=false;
+/* ===== VIP SIGNALS ===== */
+const VIP_HASH="5f710a0afcdc46d185935718617ed882";
+const vipExpiry=+localStorage.getItem("vipExpiry")||0;
+if(Date.now()>vipExpiry){ vipBtn.disabled=true; vipStatus.innerText="🔒 VIP expired"; }
 let vipUsed=+localStorage.getItem("vipUsed")||0;
-
-vipBtn.disabled=true;
+let vipStreak=0;
 
 function activateVIP(){
-  if(vipKey.value.trim()!==VIP_KEY){
-    vipActive=false;
-    vipBtn.disabled=true;
-    vipStatus.innerText="❌ Invalid VIP key";
-    return;
-  }
-  vipActive=true;
-  vipStatus.innerText="✅ Monthly VIP Activated";
-  if(vipUsed<50) vipBtn.disabled=false;
+  const input=vipKey.value.trim().replace(/-/g,"");
+  if(input!==VIP_HASH){ vipStatus.innerText="❌ Invalid VIP key"; vipBtn.disabled=true; return; }
+  const expiry=Date.now()+30*24*60*60*1000;
+  localStorage.setItem("vipExpiry",expiry);
+  vipStatus.innerText="✅ VIP active (30 days)";
+  vipBtn.disabled=false;
 }
 
 function generateVIP(){
-  if(!vipActive)return;
-  if(vipUsed>=50){
-    vipBtn.disabled=true;
-    vipSignal.innerText="🔒 VIP locked forever";
-    return;
-  }
+  if(Date.now()>+localStorage.getItem("vipExpiry")) return;
+  if(vipUsed>=50){ vipBtn.disabled=true; vipSignal.innerText="🔒 VIP limit reached"; return; }
   vipUsed++;
   localStorage.setItem("vipUsed",vipUsed);
-  vipSignal.innerText=formatSignal();
+
+  const signal=formatSignal();
+  vipSignal.innerText=signal;
+
+  vipStreak = signal.includes("1.23") || signal.includes("1.24") || signal.includes("1.25") || signal.includes("1.26") || signal.includes("1.27") || signal.includes("1.28") || signal.includes("1.29") || signal.includes("1.30") || signal.includes("1.31") || signal.includes("1.32") || signal.includes("1.33") || signal.includes("1.34") || signal.includes("1.35") || signal.includes("1.36") || signal.includes("1.37") || signal.includes("1.38") || signal.includes("1.39") || signal.includes("1.40") || signal.includes("1.41") ? vipStreak+1 : 0;
+  vipStreakBox.innerText=`🔥 Streak: ${vipStreak}`;
+
+  vipInsights.innerText=`VIP Insights:
+Total used: ${vipUsed}/50
+Low-risk: ${Math.floor(vipUsed*0.75)}
+High-risk: ${Math.floor(vipUsed*0.25)}`;
+
+  const vipTips=["VIP: Rare signals every few uses.","Track streak to maximize low-risk gains.","High-risk <25% of VIP signals.","Use within 3–5 mins windows.","Check insights to plan next move."];
+  vipTipsBox.innerText="💡 Tip: "+vipTips[Math.floor(Math.random()*vipTips.length)];
+
   cooldown(vipBtn,vipInfo);
-  if(vipUsed>=50){
-    vipBtn.disabled=true;
-    vipInfo.innerText="🔒 VIP locked forever";
-  }
 }
 vipInfo.innerText=`VIP used: ${vipUsed}/50`;
-
-/* ===== SNOW ===== */
-setInterval(()=>{
-  const s=document.createElement("div");
-  s.className="snow";
-  s.innerText="❄";
-  s.style.left=Math.random()*window.innerWidth+"px";
-  s.style.fontSize=(12+Math.random()*20)+"px";
-  document.body.appendChild(s);
-  s.animate([{top:"-20px"},{top:"110vh"}],{duration:8000});
-  setTimeout(()=>s.remove(),9000);
-},300);
 </script>
 
 </body>
