@@ -5,113 +5,63 @@
 <title>Aviator Assistant Premium</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+/* ===== BASIC STYLES ===== */
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:'Inter',Arial,sans-serif;
-  background:linear-gradient(135deg,#0d1117,#0f1a20);
-  color:#e0f7ff;
-  overflow-x:hidden;
-}
-.card{
-  max-width:440px;
-  margin:40px auto;
-  padding:24px;
-  border-radius:24px;
-  background:rgba(20,20,25,0.85);
-  backdrop-filter:blur(15px);
-  box-shadow:0 0 40px rgba(0,255,200,0.35);
-  border:1px solid rgba(0,255,200,0.3);
-}
-.header{
-  text-align:center;
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:20px;
-  background:linear-gradient(90deg,#00fff0,#00bfff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.tabs{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-}
-.tab{
-  flex:1;
-  padding:12px;
-  text-align:center;
-  border-radius:16px;
-  background:#111;
-  border:1px solid #00fff0;
-  cursor:pointer;
-  transition:.3s;
-}
-.tab.active{
-  background:linear-gradient(90deg,#00fff0,#00bfff);
-  color:#111;
-  font-weight:700;
-  box-shadow:0 0 15px rgba(0,255,255,0.6);
-}
-input,select,button{
-  width:100%;
-  padding:14px;
-  margin-top:12px;
-  border-radius:16px;
-  border:none;
-  font-size:15px;
-}
-input,select{
-  background:#0c0c0c;
-  color:#fff;
-  border:1px solid #00fff0;
-}
-button{
-  background:linear-gradient(90deg,#00fff0,#00bfff);
-  font-weight:700;
-  cursor:pointer;
-  transition:.3s;
-}
-button:hover:not(:disabled){
-  box-shadow:0 0 12px rgba(0,255,255,0.6);
-}
-button:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
-.signal{
-  margin-top:18px;
-  padding:18px;
-  border:2px solid #00fff0;
-  border-radius:18px;
-  text-align:center;
-  white-space:pre-line;
-  background:rgba(0,0,0,0.65);
-  font-weight:500;
-  font-size:14px;
-}
-.small{
-  text-align:center;
-  font-size:13px;
-  opacity:.6;
-  margin-top:12px;
-}
-.dashboard-box{
-  margin-top:16px;
-  padding:14px;
-  border:2px solid #00bfff;
-  border-radius:16px;
-  background:rgba(0,0,0,0.55);
-  text-align:center;
-  font-size:13px;
-  margin-bottom:10px;
-}
+body{margin:0;font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#0d1117,#0f1a20);color:#e0f7ff;overflow-x:hidden;}
+.card{max-width:480px;margin:40px auto;padding:28px;border-radius:24px;background:rgba(20,20,25,0.85);backdrop-filter:blur(15px);box-shadow:0 0 40px rgba(0,255,200,0.35);border:1px solid rgba(0,255,200,0.3);position:relative;}
+.header{text-align:center;font-size:24px;font-weight:800;margin-bottom:20px;background:linear-gradient(90deg,#00fff0,#00bfff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.tabs{display:flex;gap:10px;margin-bottom:20px;}
+.tab{flex:1;padding:12px;text-align:center;border-radius:16px;background:#111;border:1px solid #00fff0;cursor:pointer;transition:.3s;}
+.tab.active{background:linear-gradient(90deg,#00fff0,#00bfff);color:#111;font-weight:700;box-shadow:0 0 15px rgba(0,255,255,0.6);}
+input,select,button{width:100%;padding:14px;margin-top:12px;border-radius:16px;border:none;font-size:15px;}
+input,select{background:#0c0c0c;color:#fff;border:1px solid #00fff0;}
+button{background:linear-gradient(90deg,#00fff0,#00bfff);font-weight:700;cursor:pointer;transition:.3s;}
+button:hover:not(:disabled){box-shadow:0 0 12px #00fff0;}
+button:disabled{opacity:.5;cursor:not-allowed;}
+.signal{margin-top:18px;padding:18px;border:2px solid #00fff0;border-radius:18px;text-align:center;white-space:pre-line;background:rgba(0,0,0,0.65);font-weight:500;font-size:14px;}
+.small{text-align:center;font-size:13px;opacity:.6;margin-top:12px;}
+.dashboard-box{margin-top:16px;padding:14px;border:2px solid #00bfff;border-radius:16px;background:rgba(0,0,0,0.55);text-align:center;font-size:13px;margin-bottom:10px;}
 .hidden{display:none;}
+
+/* ===== AVATAR SELECTION ===== */
+.avatar-grid{display:flex;gap:12px;margin-top:12px;justify-content:center;flex-wrap:wrap;}
+.avatar{font-size:28px;padding:8px;cursor:pointer;border-radius:12px;border:2px solid transparent;transition:.3s;}
+.avatar.selected{border-color:#00fff0;box-shadow:0 0 10px #00fff0;}
+
+/* ===== SAVE POPUP ===== */
+.popup{position:absolute;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);padding:12px 24px;background:rgba(0,255,255,0.15);color:#00fff0;font-weight:700;border-radius:12px;border:1px solid #00fff0;text-align:center;box-shadow:0 0 12px #00fff0,0 0 24px #00bfff;opacity:0;transition:opacity .5s, transform .5s;z-index:999;}
+.popup.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ===== AGE VERIFICATION ===== */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:99999;opacity:0;animation:fadeIn 0.5s forwards;}
+@keyframes fadeIn{to{opacity:1;}}
+.modal-content{background:rgba(10,10,15,0.95);border:2px solid #00fff0;border-radius:20px;padding:28px;text-align:center;box-shadow:0 0 20px #00fff0,0 0 40px #00bfff;color:#00fff0;font-weight:700;}
+.modal-buttons{margin-top:20px;display:flex;justify-content:center;gap:16px;}
+.modal-buttons button{padding:12px 24px;border-radius:14px;border:none;font-weight:700;cursor:pointer;background:linear-gradient(90deg,#00fff0,#00bfff);color:#111;transition:.3s;}
+.modal-buttons button:hover{box-shadow:0 0 12px #00fff0;}
+
+/* ===== STREAK BARS ===== */
+.streak-container{position: relative;width:100%;height:18px;background: rgba(0,255,255,0.1);border-radius:12px;overflow:hidden;margin-top:8px;}
+.streak-bar{height:100%;width:0%;background:linear-gradient(90deg,#00fff0,#00bfff);border-radius:12px;box-shadow:0 0 10px #00fff0,0 0 20px #00bfff;transition:width 0.5s ease;animation:glow 2s infinite alternate;}
+@keyframes glow{from{box-shadow:0 0 8px #00fff0,0 0 16px #00bfff;}to{box-shadow:0 0 16px #00fff0,0 0 32px #00bfff;}}
 </style>
 </head>
 <body>
 
+<!-- AGE VERIFICATION -->
+<div id="ageModal" class="modal">
+  <div class="modal-content">
+    <h2>⚠️ Are you 18 or older?</h2>
+    <p>You must be 18+ to use this app.</p>
+    <div class="modal-buttons">
+      <button onclick="acceptAge()">✅ Yes</button>
+      <button onclick="declineAge()">❌ No</button>
+    </div>
+  </div>
+</div>
+
 <div class="card">
+
   <div class="header">✈ Aviator Assistant <span style="color:#00fff0">Premium</span></div>
 
   <div class="tabs">
@@ -120,7 +70,7 @@ button:disabled{
     <div class="tab" onclick="showTab('vip',this)">VIP</div>
   </div>
 
-  <!-- PERSONAL -->
+  <!-- PERSONAL TAB -->
   <div id="profile">
     <select id="site">
       <option value="">Select Betting Site</option>
@@ -130,28 +80,49 @@ button:disabled{
       <option>Mostbet</option>
     </select>
     <input id="betId" placeholder="Betting ID">
+    
+    <div class="avatar-grid">
+      <div class="avatar selected">🧊</div>
+      <div class="avatar">😮‍💨</div>
+      <div class="avatar">🥶</div>
+      <div class="avatar">😘</div>
+      <div class="avatar">😤</div>
+    </div>
+
     <button onclick="saveProfile()">Save Info</button>
+    <button onclick="clearProfile()">Clear Info</button>
+    <div class="popup" id="savePopup">✅ Profile saved!</div>
     <div class="signal" id="profileStatus">No info saved</div>
   </div>
 
-  <!-- FREE -->
+  <!-- FREE TAB -->
   <div id="free" class="hidden">
     <button id="freeBtn" onclick="generateFree()">Generate Free Signal</button>
     <div class="signal" id="freeSignal">Waiting…</div>
-    <div class="dashboard-box" id="streakBox">🔥 Streak: 0</div>
+    <div class="dashboard-box">
+      🔥 Streak: <span id="freeStreakNum">0</span>
+      <div class="streak-container">
+        <div id="freeStreakBar" class="streak-bar"></div>
+      </div>
+    </div>
     <div class="dashboard-box" id="tipsBox">💡 Tip: Waiting...</div>
     <div class="small" id="freeInfo"></div>
   </div>
 
-  <!-- VIP -->
+  <!-- VIP TAB -->
   <div id="vip" class="hidden">
-    <input id="vipKey" placeholder="Enter Monthly VIP Key">
+    <input id="vipKey" placeholder="Enter VIP Key">
     <button onclick="activateVIP()">Activate VIP</button>
     <div class="signal" id="vipStatus">VIP locked</div>
     <button id="vipBtn" onclick="generateVIP()" disabled>Generate VIP Signal</button>
     <div class="signal" id="vipSignal">🔒 VIP locked</div>
     <div class="dashboard-box" id="vipInsights">VIP Insights: Locked</div>
-    <div class="dashboard-box" id="vipStreak">🔥 Streak: 0</div>
+    <div class="dashboard-box">
+      🔥 VIP Streak: <span id="vipStreakNum">0</span>
+      <div class="streak-container">
+        <div id="vipStreakBar" class="streak-bar"></div>
+      </div>
+    </div>
     <div class="dashboard-box" id="vipTips">💡 Tip: Waiting...</div>
     <div class="small" id="vipInfo"></div>
   </div>
@@ -160,40 +131,70 @@ button:disabled{
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
-  const p=JSON.parse(localStorage.getItem("profile")||"null");
-  if(p){
-    site.value=p.site||"";
-    betId.value=p.bet||"";
-    profileStatus.innerText="✅ Info restored";
-  }
-});
+/* ===== AGE MODAL ===== */
+function acceptAge(){
+  const modal=document.getElementById("ageModal");
+  modal.style.transition="opacity 0.5s ease";
+  modal.style.opacity=0;
+  setTimeout(()=>{modal.style.display="none";},500);
+}
+function declineAge(){
+  alert("You must be 18+ to use this app."); 
+  window.location.href="about:blank";
+}
+
+/* ===== TABS ===== */
 function showTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('#profile,#free,#vip').forEach(d=>d.classList.add('hidden'));
   el.classList.add('active');
   document.getElementById(id).classList.remove('hidden');
 }
-function saveProfile(){
-  localStorage.setItem("profile",JSON.stringify({site:site.value,bet:betId.value}));
-  profileStatus.innerText="✅ Information saved";
+
+/* ===== PERSONAL TAB ===== */
+let selectedAvatar="🧊";
+document.querySelectorAll('.avatar').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.querySelectorAll('.avatar').forEach(x=>x.classList.remove('selected'));
+    a.classList.add('selected');
+    selectedAvatar=a.innerText;
+  });
+});
+
+function showPopup(msg){
+  const p=document.getElementById("savePopup");
+  p.innerText=msg;
+  p.classList.add("show");
+  setTimeout(()=>{p.classList.remove("show");},2500);
 }
 
-/* ===== SIGNAL ENGINE WITH ACTION ===== */
+function saveProfile(){
+  localStorage.setItem("profile",JSON.stringify({site:site.value,bet:betId.value,avatar:selectedAvatar}));
+  profileStatus.innerText="✅ Info saved";
+  showPopup("✅ Profile saved successfully!");
+}
+
+function clearProfile(){
+  localStorage.removeItem("profile");
+  site.value=""; betId.value=""; selectedAvatar="🧊";
+  document.querySelectorAll('.avatar').forEach(x=>x.classList.remove('selected'));
+  document.querySelector('.avatar').classList.add('selected');
+  profileStatus.innerText="⚠️ Info cleared";
+  showPopup("⚠️ Profile cleared!");
+}
+
+const p=JSON.parse(localStorage.getItem("profile")||"null");
+if(p){site.value=p.site||"";betId.value=p.bet||"";selectedAvatar=p.avatar||"🧊";profileStatus.innerText="✅ Info restored";document.querySelectorAll('.avatar').forEach(x=>x.classList.remove('selected'));document.querySelectorAll('.avatar').forEach(a=>{if(a.innerText===selectedAvatar)a.classList.add('selected');});}
+
+/* ===== SIGNALS ENGINE ===== */
 function weightedSignal(){
-  if(Math.random() < 0.75){
-    return {cashout:(Math.random()*(1.41-1.23)+1.23).toFixed(2), action:"Bet now"};
-  } else {
-    return {cashout:(Math.random()*(1.75-1.42)+1.42).toFixed(2), action:"After this round"};
-  }
+  if(Math.random()<0.75){return {cashout:(Math.random()*(1.41-1.23)+1.23).toFixed(2),action:"Bet now"};}
+  else{return {cashout:(Math.random()*(1.75-1.42)+1.42).toFixed(2),action:"After this round"};}
 }
 function formatSignal(){
   const s=weightedSignal();
   const confidence=["Low","Medium","High"][Math.floor(Math.random()*3)];
-  return `🚀 Cashout: ${s.cashout}x
-📊 Confidence: ${confidence}
-⏱ Action: ${s.action}
-⚠️ Manage stake`;
+  return `🚀 Cashout: ${s.cashout}x\n📊 Confidence: ${confidence}\n⏱ Action: ${s.action}\n⚠️ Manage stake`;
 }
 
 /* ===== COOLDOWN ===== */
@@ -202,78 +203,64 @@ function cooldown(btn,label){
   btn.disabled=true;
   const t=setInterval(()=>{
     label.innerText=`⏳ Next signal in ${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
-    if(--s<0){
-      clearInterval(t);
-      btn.disabled=false;
-      label.innerText="Ready";
-    }
+    if(--s<0){clearInterval(t);btn.disabled=false;label.innerText="Ready";}
   },1000);
 }
 
 /* ===== FREE SIGNALS ===== */
-function todayKey(){ return new Date().toISOString().slice(0,10); }
 let freeData=JSON.parse(localStorage.getItem("freeData")||"{}");
-if(freeData.date!==todayKey()){ freeData={date:todayKey(),used:0}; localStorage.setItem("freeData",JSON.stringify(freeData)); }
+const todayKey=new Date().toISOString().slice(0,10);
+if(freeData.date!==todayKey){freeData={date:todayKey,used:0};localStorage.setItem("freeData",JSON.stringify(freeData));}
 let freeStreak=0;
+function updateFreeStreakBar(){
+  const bar=document.getElementById("freeStreakBar");
+  const num=document.getElementById("freeStreakNum");
+  num.innerText=freeStreak;
+  let percent=Math.min((freeStreak/10)*100,100);
+  bar.style.width=percent+"%";
+}
 function generateFree(){
-  if(freeData.used>=3){ freeBtn.disabled=true; freeInfo.innerText="🔒 Daily limit reached"; return; }
-  freeData.used++;
-  localStorage.setItem("freeData",JSON.stringify(freeData));
-
-  const signal=formatSignal();
-  freeSignal.innerText=signal;
-
-  // Streak tracker
-  freeStreak = signal.includes("1.23") || signal.includes("1.24") || signal.includes("1.25") || signal.includes("1.26") || signal.includes("1.27") || signal.includes("1.28") || signal.includes("1.29") || signal.includes("1.30") || signal.includes("1.31") || signal.includes("1.32") || signal.includes("1.33") || signal.includes("1.34") || signal.includes("1.35") || signal.includes("1.36") || signal.includes("1.37") || signal.includes("1.38") || signal.includes("1.39") || signal.includes("1.40") || signal.includes("1.41") ? freeStreak+1 : 0;
-  streakBox.innerText=`🔥 Streak: ${freeStreak}`;
-
-  // Rotate Smart Tips
+  if(freeData.used>=3){freeBtn.disabled=true;freeInfo.innerText="🔒 Daily limit reached";return;}
+  freeData.used++;localStorage.setItem("freeData",JSON.stringify(freeData));
+  const signal=formatSignal(); freeSignal.innerText=signal;
+  freeStreak++; updateFreeStreakBar();
   const tips=["Low-risk signals are frequent early.","Avoid consecutive high-risk signals >1.6x.","Manage stake by confidence.","High-risk signals are rare, be cautious.","Use 3–5 mins windows for best results."];
   tipsBox.innerText="💡 Tip: "+tips[Math.floor(Math.random()*tips.length)];
-
   cooldown(freeBtn,freeInfo);
 }
 freeInfo.innerText=`Free today: ${freeData.used}/3`;
 
 /* ===== VIP SIGNALS ===== */
 const VIP_HASH="5f710a0afcdc46d185935718617ed882";
-const vipExpiry=+localStorage.getItem("vipExpiry")||0;
-if(Date.now()>vipExpiry){ vipBtn.disabled=true; vipStatus.innerText="🔒 VIP expired"; }
 let vipUsed=+localStorage.getItem("vipUsed")||0;
+let vipActive=false;
 let vipStreak=0;
-
+function updateVIPStreakBar(){
+  const bar=document.getElementById("vipStreakBar");
+  const num=document.getElementById("vipStreakNum");
+  num.innerText=vipStreak;
+}
 function activateVIP(){
   const input=vipKey.value.trim().replace(/-/g,"");
-  if(input!==VIP_HASH){ vipStatus.innerText="❌ Invalid VIP key"; vipBtn.disabled=true; return; }
-  const expiry=Date.now()+30*24*60*60*1000;
-  localStorage.setItem("vipExpiry",expiry);
-  vipStatus.innerText="✅ VIP active (30 days)";
-  vipBtn.disabled=false;
+  if(input!==VIP_HASH){vipStatus.innerText="❌ Invalid VIP key";vipBtn.disabled=true;return;}
+  vipActive=true; vipBtn.disabled=false; vipStatus.innerText="✅ VIP Activated";
+  vipInsights.innerText=`VIP Insights:\nTotal used: ${vipUsed}/50\nLow-risk: 0\nHigh-risk: 0`;
 }
-
 function generateVIP(){
-  if(Date.now()>+localStorage.getItem("vipExpiry")) return;
-  if(vipUsed>=50){ vipBtn.disabled=true; vipSignal.innerText="🔒 VIP limit reached"; return; }
-  vipUsed++;
-  localStorage.setItem("vipUsed",vipUsed);
-
-  const signal=formatSignal();
-  vipSignal.innerText=signal;
-
-  vipStreak = signal.includes("1.23") || signal.includes("1.24") || signal.includes("1.25") || signal.includes("1.26") || signal.includes("1.27") || signal.includes("1.28") || signal.includes("1.29") || signal.includes("1.30") || signal.includes("1.31") || signal.includes("1.32") || signal.includes("1.33") || signal.includes("1.34") || signal.includes("1.35") || signal.includes("1.36") || signal.includes("1.37") || signal.includes("1.38") || signal.includes("1.39") || signal.includes("1.40") || signal.includes("1.41") ? vipStreak+1 : 0;
-  vipStreakBox.innerText=`🔥 Streak: ${vipStreak}`;
-
-  vipInsights.innerText=`VIP Insights:
-Total used: ${vipUsed}/50
-Low-risk: ${Math.floor(vipUsed*0.75)}
-High-risk: ${Math.floor(vipUsed*0.25)}`;
-
-  const vipTips=["VIP: Rare signals every few uses.","Track streak to maximize low-risk gains.","High-risk <25% of VIP signals.","Use within 3–5 mins windows.","Check insights to plan next move."];
-  vipTipsBox.innerText="💡 Tip: "+vipTips[Math.floor(Math.random()*vipTips.length)];
-
+  if(!vipActive) return;
+  if(vipUsed>=50){vipBtn.disabled=true;vipSignal.innerText="🔒 VIP limit reached";return;}
+  vipUsed++; localStorage.setItem("vipUsed",vipUsed);
+  const s=formatSignal(); vipSignal.innerText=s;
+  vipStreak++; updateVIPStreakBar();
+  const lowRisk=Math.floor(vipUsed*0.75),highRisk=Math.floor(vipUsed*0.25);
+  vipInsights.innerText=`VIP Insights:\nTotal used: ${vipUsed}/50\nLow-risk: ${lowRisk}\nHigh-risk: ${highRisk}`;
+  const vipTipsArr=["VIP: Rare signals every few uses.","Track streak to maximize low-risk gains.","High-risk <25% of VIP signals.","Use within 3–5 mins windows.","Check insights to plan next move."];
+  vipTips.innerText="💡 Tip: "+vipTipsArr[Math.floor(Math.random()*vipTipsArr.length)];
   cooldown(vipBtn,vipInfo);
 }
 vipInfo.innerText=`VIP used: ${vipUsed}/50`;
+updateFreeStreakBar();
+updateVIPStreakBar();
 </script>
 
 </body>
