@@ -32,9 +32,9 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .popup{position:absolute;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);padding:12px 24px;background:rgba(0,255,255,0.15);color:#00fff0;font-weight:700;border-radius:12px;border:1px solid #00fff0;text-align:center;box-shadow:0 0 12px #00fff0,0 0 24px #00bfff;opacity:0;transition:opacity .5s, transform .5s;z-index:999;}
 .popup.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ===== AGE VERIFICATION ===== */
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:99999;opacity:0;animation:fadeIn 0.5s forwards;}
-@keyframes fadeIn{to{opacity:1;}}
+/* ===== MODAL (AGE / VIP LIMIT / WRONG VIP) ===== */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:99999;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal.show{opacity:1;pointer-events:auto;}
 .modal-content{background:rgba(10,10,15,0.95);border:2px solid #00fff0;border-radius:20px;padding:28px;text-align:center;box-shadow:0 0 20px #00fff0,0 0 40px #00bfff;color:#00fff0;font-weight:700;}
 .modal-buttons{margin-top:20px;display:flex;justify-content:center;gap:16px;}
 .modal-buttons button{padding:12px 24px;border-radius:14px;border:none;font-weight:700;cursor:pointer;background:linear-gradient(90deg,#00fff0,#00bfff);color:#111;transition:.3s;}
@@ -49,13 +49,24 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 <body>
 
 <!-- AGE VERIFICATION -->
-<div id="ageModal" class="modal">
+<div id="ageModal" class="modal show">
   <div class="modal-content">
     <h2>⚠️ Are you 18 or older?</h2>
     <p>You must be 18+ to use this app.</p>
     <div class="modal-buttons">
       <button onclick="acceptAge()">✅ Yes</button>
       <button onclick="declineAge()">❌ No</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIP/FREE LIMIT / WRONG VIP POPUP -->
+<div id="actionModal" class="modal">
+  <div class="modal-content">
+    <h2 id="modalTitle"></h2>
+    <p id="modalText"></p>
+    <div class="modal-buttons">
+      <button onclick="closeModal()">✅ OK</button>
     </div>
   </div>
 </div>
@@ -131,17 +142,15 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 </div>
 
 <script>
-/* ===== AGE MODAL ===== */
-function acceptAge(){
-  const modal=document.getElementById("ageModal");
-  modal.style.transition="opacity 0.5s ease";
-  modal.style.opacity=0;
-  setTimeout(()=>{modal.style.display="none";},500);
+/* ===== MODAL HANDLERS ===== */
+function acceptAge(){document.getElementById("ageModal").classList.remove("show");}
+function declineAge(){alert("You must be 18+ to use this app."); window.location.href="about:blank";}
+function showModal(title,text){
+  document.getElementById("modalTitle").innerText=title;
+  document.getElementById("modalText").innerText=text;
+  document.getElementById("actionModal").classList.add("show");
 }
-function declineAge(){
-  alert("You must be 18+ to use this app."); 
-  window.location.href="about:blank";
-}
+function closeModal(){document.getElementById("actionModal").classList.remove("show");}
 
 /* ===== TABS ===== */
 function showTab(id,el){
@@ -160,20 +169,17 @@ document.querySelectorAll('.avatar').forEach(a=>{
     selectedAvatar=a.innerText;
   });
 });
-
 function showPopup(msg){
   const p=document.getElementById("savePopup");
   p.innerText=msg;
   p.classList.add("show");
   setTimeout(()=>{p.classList.remove("show");},2500);
 }
-
 function saveProfile(){
   localStorage.setItem("profile",JSON.stringify({site:site.value,bet:betId.value,avatar:selectedAvatar}));
   profileStatus.innerText="✅ Info saved";
   showPopup("✅ Profile saved successfully!");
 }
-
 function clearProfile(){
   localStorage.removeItem("profile");
   site.value=""; betId.value=""; selectedAvatar="🧊";
@@ -182,7 +188,6 @@ function clearProfile(){
   profileStatus.innerText="⚠️ Info cleared";
   showPopup("⚠️ Profile cleared!");
 }
-
 const p=JSON.parse(localStorage.getItem("profile")||"null");
 if(p){site.value=p.site||"";betId.value=p.bet||"";selectedAvatar=p.avatar||"🧊";profileStatus.innerText="✅ Info restored";document.querySelectorAll('.avatar').forEach(x=>x.classList.remove('selected'));document.querySelectorAll('.avatar').forEach(a=>{if(a.innerText===selectedAvatar)a.classList.add('selected');});}
 
@@ -220,7 +225,10 @@ function updateFreeStreakBar(){
   bar.style.width=percent+"%";
 }
 function generateFree(){
-  if(freeData.used>=3){freeBtn.disabled=true;freeInfo.innerText="🔒 Daily limit reached";return;}
+  if(freeData.used>=3){
+    showModal("Free Limit Reached","DM @loopy_ice to access VIP signals.");
+    return;
+  }
   freeData.used++;localStorage.setItem("freeData",JSON.stringify(freeData));
   const signal=formatSignal(); freeSignal.innerText=signal;
   freeStreak++; updateFreeStreakBar();
@@ -231,7 +239,7 @@ function generateFree(){
 freeInfo.innerText=`Free today: ${freeData.used}/3`;
 
 /* ===== VIP SIGNALS ===== */
-const VIP_HASH="5f710a0afcdc46d185935718617ed882";
+const VIP_KEYS=["5f710a0afcdc46d185935718617ed882","VIP-1234-5678","VIP-9999-0000","VIP-ABCD-EFGH"];
 let vipUsed=+localStorage.getItem("vipUsed")||0;
 let vipActive=false;
 let vipStreak=0;
@@ -242,13 +250,23 @@ function updateVIPStreakBar(){
 }
 function activateVIP(){
   const input=vipKey.value.trim().replace(/-/g,"");
-  if(input!==VIP_HASH){vipStatus.innerText="❌ Invalid VIP key";vipBtn.disabled=true;return;}
+  if(!VIP_KEYS.includes(input)){
+    vipStatus.innerText="❌ Invalid VIP key";
+    vipBtn.disabled=true;
+    showModal("Invalid VIP Key","The VIP key entered is incorrect.\nDM @loopy_ice to get a valid VIP key.");
+    return;
+  }
   vipActive=true; vipBtn.disabled=false; vipStatus.innerText="✅ VIP Activated";
   vipInsights.innerText=`VIP Insights:\nTotal used: ${vipUsed}/50\nLow-risk: 0\nHigh-risk: 0`;
 }
 function generateVIP(){
   if(!vipActive) return;
-  if(vipUsed>=50){vipBtn.disabled=true;vipSignal.innerText="🔒 VIP limit reached";return;}
+  if(vipUsed>=50){
+    vipBtn.disabled=true;
+    showModal("VIP Limit Reached","You have used all 50 VIP signals.\nDM @loopy_ice to access more VIP signals.");
+    vipSignal.innerText="🔒 VIP limit reached";
+    return;
+  }
   vipUsed++; localStorage.setItem("vipUsed",vipUsed);
   const s=formatSignal(); vipSignal.innerText=s;
   vipStreak++; updateVIPStreakBar();
@@ -264,4 +282,4 @@ updateVIPStreakBar();
 </script>
 
 </body>
-</html>
+      </html>
