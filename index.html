@@ -32,7 +32,7 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .popup{position:absolute;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);padding:12px 24px;background:rgba(0,255,255,0.15);color:#00fff0;font-weight:700;border-radius:12px;border:1px solid #00fff0;text-align:center;box-shadow:0 0 12px #00fff0,0 0 24px #00bfff;opacity:0;transition:opacity .5s, transform .5s;z-index:999;}
 .popup.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ===== MODAL (AGE / VIP LIMIT / WRONG VIP) ===== */
+/* ===== MODALS ===== */
 .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:99999;opacity:0;pointer-events:none;transition:opacity .3s;}
 .modal.show{opacity:1;pointer-events:auto;}
 .modal-content{background:rgba(10,10,15,0.95);border:2px solid #00fff0;border-radius:20px;padding:28px;text-align:center;box-shadow:0 0 20px #00fff0,0 0 40px #00bfff;color:#00fff0;font-weight:700;}
@@ -48,25 +48,25 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 </head>
 <body>
 
-<!-- AGE VERIFICATION -->
+<!-- AGE MODAL -->
 <div id="ageModal" class="modal show">
   <div class="modal-content">
     <h2>⚠️ Are you 18 or older?</h2>
     <p>You must be 18+ to use this app.</p>
     <div class="modal-buttons">
-      <button onclick="acceptAge()">✅ Yes</button>
-      <button onclick="declineAge()">❌ No</button>
+      <button id="ageYesBtn">✅ Yes</button>
+      <button id="ageNoBtn">❌ No</button>
     </div>
   </div>
 </div>
 
-<!-- VIP/FREE LIMIT / WRONG VIP POPUP -->
-<div id="actionModal" class="modal">
+<!-- VIP/INFO MODAL -->
+<div id="infoModal" class="modal">
   <div class="modal-content">
-    <h2 id="modalTitle"></h2>
-    <p id="modalText"></p>
+    <h2 id="infoTitle"></h2>
+    <p id="infoText"></p>
     <div class="modal-buttons">
-      <button onclick="closeModal()">✅ OK</button>
+      <button onclick="closeInfoModal()">✅ OK</button>
     </div>
   </div>
 </div>
@@ -142,17 +142,20 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 </div>
 
 <script>
-/* ===== MODAL HANDLERS ===== */
-function acceptAge(){document.getElementById("ageModal").classList.remove("show");}
-function declineAge(){alert("You must be 18+ to use this app."); window.location.href="about:blank";}
-function showModal(title,text){
-  document.getElementById("modalTitle").innerText=title;
-  document.getElementById("modalText").innerText=text;
-  document.getElementById("actionModal").classList.add("show");
-}
-function closeModal(){document.getElementById("actionModal").classList.remove("show");}
+// ===== AGE MODAL =====
+const ageModal = document.getElementById("ageModal");
+document.getElementById("ageYesBtn").onclick = () => ageModal.classList.remove("show");
+document.getElementById("ageNoBtn").onclick = () => { alert("You must be 18+"); window.location.href="about:blank"; };
 
-/* ===== TABS ===== */
+// ===== INFO MODAL =====
+function showInfoModal(title,text){
+  document.getElementById("infoTitle").innerText=title;
+  document.getElementById("infoText").innerText=text;
+  document.getElementById("infoModal").classList.add("show");
+}
+function closeInfoModal(){document.getElementById("infoModal").classList.remove("show");}
+
+// ===== TABS =====
 function showTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('#profile,#free,#vip').forEach(d=>d.classList.add('hidden'));
@@ -160,7 +163,7 @@ function showTab(id,el){
   document.getElementById(id).classList.remove('hidden');
 }
 
-/* ===== PERSONAL TAB ===== */
+// ===== PROFILE =====
 let selectedAvatar="🧊";
 document.querySelectorAll('.avatar').forEach(a=>{
   a.addEventListener('click',()=>{
@@ -191,7 +194,7 @@ function clearProfile(){
 const p=JSON.parse(localStorage.getItem("profile")||"null");
 if(p){site.value=p.site||"";betId.value=p.bet||"";selectedAvatar=p.avatar||"🧊";profileStatus.innerText="✅ Info restored";document.querySelectorAll('.avatar').forEach(x=>x.classList.remove('selected'));document.querySelectorAll('.avatar').forEach(a=>{if(a.innerText===selectedAvatar)a.classList.add('selected');});}
 
-/* ===== SIGNALS ENGINE ===== */
+// ===== SIGNALS =====
 function weightedSignal(){
   if(Math.random()<0.75){return {cashout:(Math.random()*(1.41-1.23)+1.23).toFixed(2),action:"Bet now"};}
   else{return {cashout:(Math.random()*(1.75-1.42)+1.42).toFixed(2),action:"After this round"};}
@@ -202,7 +205,7 @@ function formatSignal(){
   return `🚀 Cashout: ${s.cashout}x\n📊 Confidence: ${confidence}\n⏱ Action: ${s.action}\n⚠️ Manage stake`;
 }
 
-/* ===== COOLDOWN ===== */
+// ===== COOLDOWN =====
 function cooldown(btn,label){
   let s=180+Math.floor(Math.random()*121);
   btn.disabled=true;
@@ -212,7 +215,7 @@ function cooldown(btn,label){
   },1000);
 }
 
-/* ===== FREE SIGNALS ===== */
+// ===== FREE SIGNALS =====
 let freeData=JSON.parse(localStorage.getItem("freeData")||"{}");
 const todayKey=new Date().toISOString().slice(0,10);
 if(freeData.date!==todayKey){freeData={date:todayKey,used:0};localStorage.setItem("freeData",JSON.stringify(freeData));}
@@ -221,25 +224,26 @@ function updateFreeStreakBar(){
   const bar=document.getElementById("freeStreakBar");
   const num=document.getElementById("freeStreakNum");
   num.innerText=freeStreak;
-  let percent=Math.min((freeStreak/10)*100,100);
-  bar.style.width=percent+"%";
+  bar.style.width=Math.min((freeStreak/10)*100,100)+"%";
 }
 function generateFree(){
-  if(freeData.used>=3){
-    showModal("Free Limit Reached","DM @loopy_ice to access VIP signals.");
-    return;
-  }
+  if(freeData.used>=3){showInfoModal("Free Limit Reached","DM @loopy_ice to access VIP signals."); return;}
   freeData.used++;localStorage.setItem("freeData",JSON.stringify(freeData));
-  const signal=formatSignal(); freeSignal.innerText=signal;
+  freeSignal.innerText=formatSignal();
   freeStreak++; updateFreeStreakBar();
-  const tips=["Low-risk signals are frequent early.","Avoid consecutive high-risk signals >1.6x.","Manage stake by confidence.","High-risk signals are rare, be cautious.","Use 3–5 mins windows for best results."];
-  tipsBox.innerText="💡 Tip: "+tips[Math.floor(Math.random()*tips.length)];
   cooldown(freeBtn,freeInfo);
+  freeInfo.innerText=`Free today: ${freeData.used}/3`;
 }
-freeInfo.innerText=`Free today: ${freeData.used}/3`;
+updateFreeStreakBar();
 
-/* ===== VIP SIGNALS ===== */
-const VIP_KEYS=["5f710a0afcdc46d185935718617ed882","VIP-1234-5678","VIP-9999-0000","VIP-ABCD-EFGH"];
+// ===== VIP SIGNALS =====
+const VIP_KEYS={
+  "AV-WK-8C2F9D1B7A5E4":{type:"Weekly",duration:"7 days"},
+  "AV-WK-6E1A9F5C2B7D8":{type:"Weekly",duration:"7 days"},
+  "AV-MN-9F2C7E4A8D1B6":{type:"Monthly",duration:"30 days"},
+  "AV-MN-5A3E9D7C1F8B2":{type:"Monthly",duration:"30 days"},
+  "AV-PERSONAL-KEY":{type:"Personal",duration:"Unlimited"}
+};
 let vipUsed=+localStorage.getItem("vipUsed")||0;
 let vipActive=false;
 let vipStreak=0;
@@ -249,37 +253,26 @@ function updateVIPStreakBar(){
   num.innerText=vipStreak;
 }
 function activateVIP(){
-  const input=vipKey.value.trim().replace(/-/g,"");
-  if(!VIP_KEYS.includes(input)){
-    vipStatus.innerText="❌ Invalid VIP key";
-    vipBtn.disabled=true;
-    showModal("Invalid VIP Key","The VIP key entered is incorrect.\nDM @loopy_ice to get a valid VIP key.");
-    return;
-  }
-  vipActive=true; vipBtn.disabled=false; vipStatus.innerText="✅ VIP Activated";
-  vipInsights.innerText=`VIP Insights:\nTotal used: ${vipUsed}/50\nLow-risk: 0\nHigh-risk: 0`;
+  const input=vipKey.value.trim();
+  if(!VIP_KEYS[input]){ vipStatus.innerText="❌ Invalid VIP key"; vipBtn.disabled=true;
+    showInfoModal("Invalid VIP Key","The VIP key entered is incorrect.\nDM @loopy_ice to get a valid key."); return;}
+  const info=VIP_KEYS[input];
+  vipActive=true; vipBtn.disabled=false; vipStatus.innerText=`✅ VIP Activated (${info.type}, ${info.duration})`;
+  vipInsights.innerText=`VIP Insights:\nTotal used: ${vipUsed}/50\nType: ${info.type}\nDuration: ${info.duration}`;
 }
 function generateVIP(){
   if(!vipActive) return;
-  if(vipUsed>=50){
-    vipBtn.disabled=true;
-    showModal("VIP Limit Reached","You have used all 50 VIP signals.\nDM @loopy_ice to access more VIP signals.");
-    vipSignal.innerText="🔒 VIP limit reached";
-    return;
-  }
+  if(vipUsed>=50){vipBtn.disabled=true; showInfoModal("VIP Limit Reached","You have used all 50 VIP signals."); vipSignal.innerText="🔒 VIP limit reached"; return;}
   vipUsed++; localStorage.setItem("vipUsed",vipUsed);
-  const s=formatSignal(); vipSignal.innerText=s;
+  vipSignal.innerText=formatSignal();
   vipStreak++; updateVIPStreakBar();
-  const lowRisk=Math.floor(vipUsed*0.75),highRisk=Math.floor(vipUsed*0.25);
-  vipInsights.innerText=`VIP Insights:\nTotal used: ${vipUsed}/50\nLow-risk: ${lowRisk}\nHigh-risk: ${highRisk}`;
-  const vipTipsArr=["VIP: Rare signals every few uses.","Track streak to maximize low-risk gains.","High-risk <25% of VIP signals.","Use within 3–5 mins windows.","Check insights to plan next move."];
-  vipTips.innerText="💡 Tip: "+vipTipsArr[Math.floor(Math.random()*vipTipsArr.length)];
   cooldown(vipBtn,vipInfo);
+  vipInfo.innerText=`VIP used: ${vipUsed}/50`;
+  const tips=["Track streaks to maximize low-risk gains","Use 3–5 mins windows for best results","VIP: Rare signals every few uses"];
+  vipTips.innerText="💡 Tip: "+tips[Math.floor(Math.random()*tips.length)];
 }
-vipInfo.innerText=`VIP used: ${vipUsed}/50`;
-updateFreeStreakBar();
 updateVIPStreakBar();
+vipInfo.innerText=`VIP used: ${vipUsed}/50`;
 </script>
-
 </body>
-      </html>
+                  </html>
